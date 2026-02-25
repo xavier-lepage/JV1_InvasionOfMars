@@ -26,7 +26,7 @@ int Game::run()
 
 	while (renderWindow.isOpen())
 	{
-		calculateDeltaTime();
+		computeDeltaTime();
 		getInputs();
 		update();
 		draw();
@@ -104,7 +104,8 @@ void Game::update()
 	//On peut déplacer la vue, mais on peut aussi lui la centrer sur une position précise, 
 	//comme celle du joueur (avec la méthode setCenter).  Quand votre joueur va se déplacer 
 	//vous devrez centrer la vue sur lui.
-	mainView.move({ inputs.moveHorizontal * 5.0f, inputs.moveVertical * 5.0f });
+	player.move({ inputs.moveHorizontal * 5.0f, inputs.moveVertical * 5.0f });
+	mainView.setCenter(player.getPosition());
 	ajustCrossingWorldLimits();
 }
 
@@ -134,7 +135,7 @@ bool Game::unload()
 	return true;
 }
 
-void Game::calculateDeltaTime()
+void Game::computeDeltaTime()
 {
 	deltaTime = clock.restart().asSeconds();
 }

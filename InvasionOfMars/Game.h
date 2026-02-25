@@ -34,7 +34,7 @@ private:
 	void draw();
 	bool unload();
 
-	void calculateDeltaTime();
+	void computeDeltaTime();
 
 	void ajustCrossingWorldLimits();
 
