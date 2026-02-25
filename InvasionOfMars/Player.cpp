@@ -4,7 +4,6 @@
 
 Player::Player()
 {
-
 }
 
 void Player::init()

@@ -29,4 +29,3 @@ struct Inputs
 	float moveHorizontal;
 	bool isGamepadActive;
 };
-
