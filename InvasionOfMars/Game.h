@@ -52,6 +52,7 @@ private:
 
 	Sprite* field = nullptr;
 	Player player;
+	const float PLAYER_SPEED = 5.0f;
 
 	Alien aliens[3];
 };

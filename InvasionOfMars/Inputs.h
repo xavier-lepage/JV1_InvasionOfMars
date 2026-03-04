@@ -1,8 +1,16 @@
 #pragma once
+#include <SFML/Graphics.hpp>
+
+using namespace sf;
 
 struct Inputs
 {
 	const float DEAD_ZONE = 20.0f;
+
+	float moveVertical;
+	float moveHorizontal;
+	bool isGamepadActive;
+	Vector2f mousePosition;
 
 	Inputs()
 	{
@@ -13,9 +21,11 @@ struct Inputs
 	{
 		moveVertical = 0.0f;
 		moveHorizontal = 0.0f;
+		mousePosition = { 0.0f, 0.0f };
+
 		//Peut-être pratique de sauvegarder le fait
 		//que le gamepad soit actif ou non (voir game.getInputs)
-		bool isGamepadActive = false;
+		isGamepadActive = false;
 	}	
 
 	//Portée analogue -100 à 100
@@ -24,8 +34,4 @@ struct Inputs
 		if (abs(axisValue) < DEAD_ZONE) return 0.0f;
 		return axisValue / 100.0f;
 	}
-
-	float moveVertical;
-	float moveHorizontal;
-	bool isGamepadActive;
 };
