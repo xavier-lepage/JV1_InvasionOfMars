@@ -77,25 +77,18 @@ void Game::getInputs()
 
 	if (Joystick::isConnected(0))
 	{
-		//le / 100 à la fin: on ramène le tout à une échelle de 0 à 1: plus simple
 		inputs.moveHorizontal = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::X));
 		inputs.moveVertical = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::Y));
 		inputs.isGamepadActive = true;
 	}
 	else
 	{
-		//Notez que les diagonales ne sont pas gérées actuellement et que le déplacement
-		//est plus rapide en diagonale.  À vous de trouver une solution pour corriger ça.
-		//Vous avez le droit d'ajouter une méthode dans la struct inputs qui ferait cette 
-		//correction, un peu comme manageGamepadAxis.
-		//Notez que si moveHorizontal et moveVectical sont toutes deux pas à 0, alors on est
-		//en diagonal
-
 		if (Keyboard::isKeyPressed(Keyboard::Scan::A)) inputs.moveHorizontal -= 1.0f;
 		if (Keyboard::isKeyPressed(Keyboard::Scan::D)) inputs.moveHorizontal += 1.0f;
 		if (Keyboard::isKeyPressed(Keyboard::Scan::W)) inputs.moveVertical -= 1.0f;
 		if (Keyboard::isKeyPressed(Keyboard::Scan::S)) inputs.moveVertical += 1.0f;
 		inputs.mousePosition = renderWindow.mapPixelToCoords(Mouse::getPosition(renderWindow));
+		inputs.manageDiagonalMovement();
 	}
 }
 

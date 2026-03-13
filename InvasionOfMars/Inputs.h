@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Constants.h"
 
 using namespace sf;
 
@@ -33,5 +34,14 @@ struct Inputs
 	{
 		if (abs(axisValue) < DEAD_ZONE) return 0.0f;
 		return axisValue / 100.0f;
+	}
+
+	void manageDiagonalMovement()
+	{
+		if (moveHorizontal != 0 && moveVertical != 0)
+		{
+			moveHorizontal *= DIAGONAL_RATIO;
+			moveVertical *= DIAGONAL_RATIO;
+		}
 	}
 };
