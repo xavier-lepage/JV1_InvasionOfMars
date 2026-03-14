@@ -8,10 +8,14 @@ struct Inputs
 {
 	const float DEAD_ZONE = 20.0f;
 
-	float moveVertical;
-	float moveHorizontal;
-	bool isGamepadActive;
 	Vector2f mousePosition;
+
+	Vector2f move;
+	Vector2f aim;
+
+	Angle aimAngle;
+
+	bool rotated;
 
 	Inputs()
 	{
@@ -20,16 +24,13 @@ struct Inputs
 
 	void reset()
 	{
-		moveVertical = 0.0f;
-		moveHorizontal = 0.0f;
 		mousePosition = { 0.0f, 0.0f };
+		move = { 0.0f, 0.0f };
+		aim = { 0.0f, 0.0f };
 
-		//Peut-être pratique de sauvegarder le fait
-		//que le gamepad soit actif ou non (voir game.getInputs)
-		isGamepadActive = false;
+		rotated = false;
 	}	
 
-	//Portée analogue -100 à 100
 	float manageGamepadAxis(const float axisValue)
 	{
 		if (abs(axisValue) < DEAD_ZONE) return 0.0f;
@@ -38,10 +39,10 @@ struct Inputs
 
 	void manageDiagonalMovement()
 	{
-		if (moveHorizontal != 0 && moveVertical != 0)
+		if (move.x != 0 && move.y != 0)
 		{
-			moveHorizontal *= DIAGONAL_RATIO;
-			moveVertical *= DIAGONAL_RATIO;
+			move.x *= DIAGONAL_RATIO;
+			move.y *= DIAGONAL_RATIO;
 		}
 	}
 };

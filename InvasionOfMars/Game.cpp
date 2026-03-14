@@ -49,6 +49,11 @@ bool Game::init()
 	player.init();
 	player.setPosition(WORLD_CENTER_X, WORLD_CENTER_Y);
 
+	topBound = player.getTexture().getSize().y / 2;
+	bottomBound = WORLD_HEIGHT - player.getTexture().getSize().y / 2;
+	rightBound = WORLD_WIDTH - player.getTexture().getSize().x / 2;
+	leftBound = player.getTexture().getSize().x / 2;
+
 	for (int i = 0; i < 3; i++)
 	{
 		aliens[i].init(i);
@@ -77,17 +82,29 @@ void Game::getInputs()
 
 	if (Joystick::isConnected(0))
 	{
-		inputs.moveHorizontal = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::X));
-		inputs.moveVertical = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::Y));
-		inputs.isGamepadActive = true;
+		inputs.move.x = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::X));
+		inputs.move.y = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::Y));
+
+		inputs.aim.x = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::U));
+		inputs.aim.y = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::V));
+
+		if (inputs.aim.x != 0.0f || inputs.aim.y != 0.0f)
+		{
+			inputs.aimAngle = radians(atan2f(inputs.aim.y, inputs.aim.x));
+			inputs.rotated = true;
+		}
 	}
 	else
 	{
-		if (Keyboard::isKeyPressed(Keyboard::Scan::A)) inputs.moveHorizontal -= 1.0f;
-		if (Keyboard::isKeyPressed(Keyboard::Scan::D)) inputs.moveHorizontal += 1.0f;
-		if (Keyboard::isKeyPressed(Keyboard::Scan::W)) inputs.moveVertical -= 1.0f;
-		if (Keyboard::isKeyPressed(Keyboard::Scan::S)) inputs.moveVertical += 1.0f;
+		if (Keyboard::isKeyPressed(Keyboard::Scan::A)) inputs.move.x -= 1.0f;
+		if (Keyboard::isKeyPressed(Keyboard::Scan::D)) inputs.move.x += 1.0f;
+		if (Keyboard::isKeyPressed(Keyboard::Scan::W)) inputs.move.y -= 1.0f;
+		if (Keyboard::isKeyPressed(Keyboard::Scan::S)) inputs.move.y += 1.0f;
 		inputs.mousePosition = renderWindow.mapPixelToCoords(Mouse::getPosition(renderWindow));
+
+		inputs.aimAngle = radians(atan2f(inputs.mousePosition.y - player.getPosition().y, inputs.mousePosition.x - player.getPosition().x));
+		inputs.rotated = true;
+
 		inputs.manageDiagonalMovement();
 	}
 }
@@ -98,8 +115,10 @@ void Game::update()
 	//On peut déplacer la vue, mais on peut aussi lui la centrer sur une position précise, 
 	//comme celle du joueur (avec la méthode setCenter).  Quand votre joueur va se déplacer 
 	//vous devrez centrer la vue sur lui.
-	player.move({ inputs.moveHorizontal * PLAYER_SPEED, inputs.moveVertical * PLAYER_SPEED });
-	player.rotatePlayer(inputs.mousePosition);
+	player.move({ inputs.move.x * PLAYER_SPEED, inputs.move.y * PLAYER_SPEED });
+	keepPlayerInbound();
+
+	if (inputs.rotated) player.setRotation(inputs.aimAngle);
 
 	mainView.setCenter(player.getPosition());
 	ajustCrossingWorldLimits();
@@ -107,7 +126,6 @@ void Game::update()
 
 void Game::draw()
 {
-	//Toujours important d'effacer l'écran précédent
 	renderWindow.clear();
 	renderWindow.setView(mainView);
 	renderWindow.draw(*field);
@@ -147,4 +165,13 @@ void Game::ajustCrossingWorldLimits()
 		mainView.setCenter({ mainView.getCenter().x, WORLD_LIMIT_MIN_Y });
 	else if (mainView.getCenter().y > WORLD_LIMIT_MAX_Y)
 		mainView.setCenter({ mainView.getCenter().x, WORLD_LIMIT_MAX_Y });
+}
+
+void Game::keepPlayerInbound()
+{
+	if (player.getPosition().x < leftBound) player.setPosition(leftBound, player.getPosition().y);
+	if (player.getPosition().y < topBound) player.setPosition(player.getPosition().x, topBound);
+
+	if (player.getPosition().x > rightBound) player.setPosition(rightBound, player.getPosition().y);
+	if (player.getPosition().y > bottomBound) player.setPosition(player.getPosition().x, bottomBound);
 }
