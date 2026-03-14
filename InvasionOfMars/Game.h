@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Alien.h"
 #include "Hud.h"
+#include "Bullet.h"
 
 using namespace sf;
 using std::optional;
@@ -39,12 +40,19 @@ private:
 	void ajustCrossingWorldLimits();
 	void keepPlayerInbound();
 
+	void initBullets();
+	void updateBullets();
+	void drawBullets();
+
+	void fire();
+
 	RenderWindow renderWindow;
 	View mainView;
 	View hudView;
 
     Clock clock;
 	float deltaTime;
+	float recoilTimer;
 
 	Inputs inputs;
 
@@ -54,7 +62,11 @@ private:
 	Sprite* field = nullptr;
 	Player player;
 
+	Bullet bullets[BULLET_COUNT];
+
 	Alien aliens[3];
+
+	FloatRect currentViewRectangle;
 
 	float topBound;
 	float bottomBound;

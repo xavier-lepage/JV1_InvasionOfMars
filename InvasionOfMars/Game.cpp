@@ -49,10 +49,12 @@ bool Game::init()
 	player.init();
 	player.setPosition(WORLD_CENTER_X, WORLD_CENTER_Y);
 
-	topBound = player.getTexture().getSize().y / 2;
-	bottomBound = WORLD_HEIGHT - player.getTexture().getSize().y / 2;
-	rightBound = WORLD_WIDTH - player.getTexture().getSize().x / 2;
-	leftBound = player.getTexture().getSize().x / 2;
+	topBound = player.getTexture().getSize().y / 2.0f;
+	bottomBound = WORLD_HEIGHT - player.getTexture().getSize().y / 2.0f;
+	rightBound = WORLD_WIDTH - player.getTexture().getSize().x / 2.0f;
+	leftBound = player.getTexture().getSize().x / 2.0f;
+
+	initBullets();
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -100,6 +102,9 @@ void Game::getInputs()
 		if (Keyboard::isKeyPressed(Keyboard::Scan::D)) inputs.move.x += 1.0f;
 		if (Keyboard::isKeyPressed(Keyboard::Scan::W)) inputs.move.y -= 1.0f;
 		if (Keyboard::isKeyPressed(Keyboard::Scan::S)) inputs.move.y += 1.0f;
+
+		if (Mouse::isButtonPressed(Mouse::Button::Left)) inputs.fire = true;
+
 		inputs.mousePosition = renderWindow.mapPixelToCoords(Mouse::getPosition(renderWindow));
 
 		inputs.aimAngle = radians(atan2f(inputs.mousePosition.y - player.getPosition().y, inputs.mousePosition.x - player.getPosition().x));
@@ -112,6 +117,11 @@ void Game::getInputs()
 //Vous devrez centrer la vue sur le player: https://www.sfml-dev.org/tutorials/2.6/graphics-view-fr.php
 void Game::update()
 {
+	currentViewRectangle = FloatRect(
+		mainView.getCenter() - mainView.getSize() / 2.0f,
+		mainView.getSize()
+	);
+
 	//On peut déplacer la vue, mais on peut aussi lui la centrer sur une position précise, 
 	//comme celle du joueur (avec la méthode setCenter).  Quand votre joueur va se déplacer 
 	//vous devrez centrer la vue sur lui.
@@ -119,6 +129,10 @@ void Game::update()
 	keepPlayerInbound();
 
 	if (inputs.rotated) player.setRotation(inputs.aimAngle);
+
+	if (recoilTimer > 0) recoilTimer -= deltaTime;
+	if (inputs.fire) fire();
+	updateBullets();
 
 	mainView.setCenter(player.getPosition());
 	ajustCrossingWorldLimits();
@@ -130,6 +144,8 @@ void Game::draw()
 	renderWindow.setView(mainView);
 	renderWindow.draw(*field);
 
+	drawBullets();
+
 	for (int i = 0; i < 3; i++)
 		aliens[i].draw(renderWindow);
 
@@ -140,6 +156,40 @@ void Game::draw()
 	renderWindow.setView(mainView);
 
 	renderWindow.display();
+}
+
+void Game::fire()
+{
+	if (recoilTimer > 0) return;
+
+	Bullet* bullet = Bullet::getAvailableBullet();
+	if (bullet != nullptr)
+	{
+		recoilTimer = BULLET_RECOIL;
+
+		bullet->shoot(
+			player.getPosition(),
+			player.getRotation()
+		);
+	}
+}
+
+void Game::initBullets()
+{
+	for (int i = 0; i < BULLET_COUNT; i++)
+		bullets[i].setTexture(ContentPipeline::getInstance().getProjectileTexture(BULLET_TEXTURE_ID));
+}
+
+void Game::updateBullets()
+{
+	for (int i = 0; i < BULLET_COUNT; i++)
+		bullets[i].update(deltaTime, currentViewRectangle);
+}
+
+void Game::drawBullets()
+{
+	for (int i = 0; i < BULLET_COUNT; i++)
+		bullets[i].draw(renderWindow);
 }
 
 bool Game::unload()
