@@ -125,7 +125,7 @@ void Game::update()
 	//On peut déplacer la vue, mais on peut aussi lui la centrer sur une position précise, 
 	//comme celle du joueur (avec la méthode setCenter).  Quand votre joueur va se déplacer 
 	//vous devrez centrer la vue sur lui.
-	player.move({ inputs.move.x * PLAYER_SPEED, inputs.move.y * PLAYER_SPEED });
+	player.move({ inputs.move.x * PLAYER_SPEED * deltaTime, inputs.move.y * PLAYER_SPEED * deltaTime });
 	keepPlayerInbound();
 
 	if (inputs.rotated) player.setRotation(inputs.aimAngle);
