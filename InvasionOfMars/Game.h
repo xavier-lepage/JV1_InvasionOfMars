@@ -34,9 +34,10 @@ private:
 	void draw();
 	bool unload();
 
-	void calculateDeltaTime();
+	void computeDeltaTime();
 
 	void ajustCrossingWorldLimits();
+	void keepPlayerInbound();
 
 	RenderWindow renderWindow;
 	View mainView;
@@ -54,4 +55,9 @@ private:
 	Player player;
 
 	Alien aliens[3];
+
+	float topBound;
+	float bottomBound;
+	float rightBound;
+	float leftBound;
 };
