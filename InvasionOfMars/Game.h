@@ -46,6 +46,7 @@ private:
 
 	void initAliens();
 	void spawnAliens();
+	void updateAliens();
 	void drawAliens();
 
 	void fire();

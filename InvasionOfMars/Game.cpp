@@ -133,6 +133,7 @@ void Game::update()
 
 	if (alienSpawnTimer > 0) alienSpawnTimer -= deltaTime;
 	spawnAliens();
+	updateAliens();
 }
 
 void Game::draw()
@@ -239,6 +240,12 @@ void Game::spawnAliens()
 
 		alien->spawn();
 	}
+}
+
+void Game::updateAliens()
+{
+	for (int i = 0; i < ALIEN_COUNT; i++)
+		aliens[i].update(deltaTime);
 }
 
 void Game::drawAliens()
