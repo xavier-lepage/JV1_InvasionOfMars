@@ -7,6 +7,7 @@ public:
 	Alien();
 	void init(const int alienTextureNumber);
 	static void setPlayer(const GameObject* player);
+	void update(float deltaTime);
 	Vector2f findSpawnPosition() const;
 	void spawn();
 	static Alien* getAvailableAlien();

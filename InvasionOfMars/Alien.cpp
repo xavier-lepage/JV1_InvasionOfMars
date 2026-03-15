@@ -20,6 +20,17 @@ void Alien::setPlayer(const GameObject* player)
 	Alien::player = player;
 }
 
+void Alien::update(float deltaTime)
+{
+	if (isActive())
+	{
+		float angle = atan2f(player->getPosition().y - getPosition().y, player->getPosition().x - getPosition().x);
+
+		this->setRotation(radians(angle));
+		this->move(cos(angle) * ALIEN_SPEED * deltaTime, sin(angle) * ALIEN_SPEED * deltaTime);
+	}
+}
+
 void Alien::addToAlienStack()
 {
 	alienStack.push(this);
