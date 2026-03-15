@@ -9,6 +9,11 @@ const float DIAGONAL_RATIO = 0.70710678f;
 
 const float PLAYER_RADIUS = 32.0f;
 const float PLAYER_SPEED = 300.0f;
+const float PLAYER_RESPAWN_COOLDOWN = 2.0f;
+const float PLAYER_INVINCIBILITY_DURATION = 3.0f;
+static const unsigned int PLAYER_LIFE_COUNT = 5;
+static const unsigned int PLAYER_DEFAULT_OPACITY = 255;
+static const unsigned int PLAYER_INVINCIBLE_OPACITY = 160;
 
 static const unsigned int ALIEN_COUNT = 60;
 const float ALIEN_SPAWN_COOLDOWN = 0.33f;

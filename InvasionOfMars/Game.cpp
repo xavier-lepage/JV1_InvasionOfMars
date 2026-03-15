@@ -121,18 +121,18 @@ void Game::update()
 	//comme celle du joueur (avec la méthode setCenter).  Quand votre joueur va se déplacer 
 	//vous devrez centrer la vue sur lui.
 	player.move({ inputs.move.x * PLAYER_SPEED * deltaTime, inputs.move.y * PLAYER_SPEED * deltaTime });
-	keepPlayerInbound();
-
 	if (inputs.rotated) player.setRotation(inputs.aimAngle);
+	keepPlayerInbound();
+	player.update(deltaTime);
 
-	if (recoilTimer > 0) recoilTimer -= deltaTime;
+	if (recoilTimer > 0.0f) recoilTimer -= deltaTime;
 	if (inputs.fire) fire();
 	updateBullets();
 
 	mainView.setCenter(player.getPosition());
 	ajustCrossingWorldLimits();
 
-	if (alienSpawnTimer > 0) alienSpawnTimer -= deltaTime;
+	if (alienSpawnTimer > 0.0f) alienSpawnTimer -= deltaTime;
 	spawnAliens();
 	updateAliens();
 
@@ -200,7 +200,7 @@ void Game::handlePlayerCollisions()
 	for (int i = 0; i < ALIEN_COUNT; i++)
 	{
 		if (aliens[i].isActive())
-			if (player.isCircleColliding(aliens[i])) player.deactivate();
+			if (player.isCircleColliding(aliens[i])) player.kill();
 	}
 }
 
