@@ -65,3 +65,9 @@ void Alien::spawn()
 
 	this->activate();
 }
+
+void Alien::deactivate()
+{
+	GameObject::deactivate();
+	this->addToAlienStack();
+}

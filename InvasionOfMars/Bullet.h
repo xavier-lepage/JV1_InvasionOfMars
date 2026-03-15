@@ -12,6 +12,7 @@ public:
 	~Bullet();
 	void update(const float deltaTime, const FloatRect& currentViewRectangle);
 	void shoot(const Vector2f& initialPosition, const Angle& initialAngle);
+	void deactivate() override;
 	static Bullet* getAvailableBullet();
 
 private:
