@@ -52,6 +52,8 @@ private:
 	void fire();
 	void handleProjectileCollisions();
 
+	void handlePlayerCollisions();
+
 	RenderWindow renderWindow;
 	View mainView;
 	View hudView;

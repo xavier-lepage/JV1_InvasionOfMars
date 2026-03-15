@@ -48,6 +48,7 @@ bool Game::init()
 
 	player.init();
 	player.setPosition(WORLD_CENTER_X, WORLD_CENTER_Y);
+	player.setCollisionCircleRadius(PLAYER_RADIUS);
 
 	topBound = player.getTexture().getSize().y / 2.0f;
 	bottomBound = WORLD_HEIGHT - player.getTexture().getSize().y / 2.0f;
@@ -136,6 +137,7 @@ void Game::update()
 	updateAliens();
 
 	handleProjectileCollisions();
+	handlePlayerCollisions();
 }
 
 void Game::draw()
@@ -158,7 +160,7 @@ void Game::draw()
 
 void Game::fire()
 {
-	if (recoilTimer > 0) return;
+	if (recoilTimer > 0 || !player.isActive()) return;
 
 	Bullet* bullet = Bullet::getAvailableBullet();
 	if (bullet != nullptr)
@@ -182,7 +184,7 @@ void Game::handleProjectileCollisions()
 			{
 				if (aliens[j].isActive())
 				{
-					if (bullets[i].getCollisionCircle().checkCollision(aliens[j].getCollisionCircle()))
+					if (bullets[i].isCircleColliding(aliens[j]))
 					{
 						bullets[i].deactivate();
 						aliens[j].deactivate();
@@ -193,6 +195,14 @@ void Game::handleProjectileCollisions()
 	}
 }
 
+void Game::handlePlayerCollisions()
+{
+	for (int i = 0; i < ALIEN_COUNT; i++)
+	{
+		if (aliens[i].isActive())
+			if (player.isCircleColliding(aliens[i])) player.deactivate();
+	}
+}
 
 void Game::initBullets()
 {

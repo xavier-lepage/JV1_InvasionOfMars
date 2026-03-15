@@ -7,6 +7,7 @@ static const unsigned int WORLD_HEIGHT = 2160;
 
 const float DIAGONAL_RATIO = 0.70710678f;
 
+const float PLAYER_RADIUS = 32.0f;
 const float PLAYER_SPEED = 300.0f;
 
 static const unsigned int ALIEN_COUNT = 60;
