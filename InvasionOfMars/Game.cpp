@@ -55,13 +55,7 @@ bool Game::init()
 	leftBound = player.getTexture().getSize().x / 2.0f;
 
 	initBullets();
-
-	for (int i = 0; i < 3; i++)
-	{
-		aliens[i].init(i);
-		aliens[i].setPosition(WORLD_CENTER_X - 200 + i * 200, WORLD_CENTER_Y + 200);
-		aliens[i].activate();
-	}
+	initAliens();
 
 	hud.hudInit();	
 
@@ -136,6 +130,9 @@ void Game::update()
 
 	mainView.setCenter(player.getPosition());
 	ajustCrossingWorldLimits();
+
+	if (alienSpawnTimer > 0) alienSpawnTimer -= deltaTime;
+	spawnAliens();
 }
 
 void Game::draw()
@@ -145,9 +142,7 @@ void Game::draw()
 	renderWindow.draw(*field);
 
 	drawBullets();
-
-	for (int i = 0; i < 3; i++)
-		aliens[i].draw(renderWindow);
+	drawAliens();
 
 	player.draw(renderWindow);
 	
@@ -224,4 +219,30 @@ void Game::keepPlayerInbound()
 
 	if (player.getPosition().x > rightBound) player.setPosition(rightBound, player.getPosition().y);
 	if (player.getPosition().y > bottomBound) player.setPosition(player.getPosition().x, bottomBound);
+}
+
+void Game::initAliens()
+{
+	Alien::setPlayer(&player);
+
+	for (int i = 0; i < ALIEN_COUNT; i++)
+		aliens[i].init(rand() % ContentPipeline::ALIEN_TEXTURE_NUMBER);
+}
+
+void Game::spawnAliens()
+{
+	if (alienSpawnTimer > 0) return;
+	Alien* alien = Alien::getAvailableAlien();
+	if (alien != nullptr)
+	{
+		alienSpawnTimer = ALIEN_SPAWN_COOLDOWN;
+
+		alien->spawn();
+	}
+}
+
+void Game::drawAliens()
+{
+	for (int i = 0; i < ALIEN_COUNT; i++)
+		aliens[i].draw(renderWindow);
 }

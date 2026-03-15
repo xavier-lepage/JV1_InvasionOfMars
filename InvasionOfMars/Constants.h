@@ -9,6 +9,10 @@ const float PLAYER_SPEED = 300.0f;
 
 const float DIAGONAL_RATIO = 0.70710678f;
 
+static const unsigned int ALIEN_COUNT = 60;
+const float ALIEN_SPAWN_COOLDOWN = 0.33f;
+const float MIN_ALIEN_DISTANCE = 100.0f;
+
 static const unsigned int BULLET_COUNT = 12;
 const float BULLET_RECOIL = 0.1f;
 static const unsigned int BULLET_TEXTURE_ID = 1;

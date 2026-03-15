@@ -44,6 +44,10 @@ private:
 	void updateBullets();
 	void drawBullets();
 
+	void initAliens();
+	void spawnAliens();
+	void drawAliens();
+
 	void fire();
 
 	RenderWindow renderWindow;
@@ -53,6 +57,7 @@ private:
     Clock clock;
 	float deltaTime;
 	float recoilTimer;
+	float alienSpawnTimer;
 
 	Inputs inputs;
 
@@ -64,7 +69,7 @@ private:
 
 	Bullet bullets[BULLET_COUNT];
 
-	Alien aliens[3];
+	Alien aliens[ALIEN_COUNT];
 
 	FloatRect currentViewRectangle;
 
