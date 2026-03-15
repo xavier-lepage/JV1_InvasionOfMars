@@ -22,9 +22,7 @@ void Bullet::update(const float deltaTime, const FloatRect& currentViewRectangle
 		this->move(bulletMove * deltaTime);
 
 		if (!this->getGlobalBounds().findIntersection(currentViewRectangle).has_value())
-		{
 			this->deactivate();
-		}
 	}
 }
 
