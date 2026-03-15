@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "CollisionCircle.h"
+#include "Constants.h"
+#include <stack>
 
 using namespace sf;
 
@@ -30,6 +32,9 @@ public:
 	void move(const float offsetX, const float offsetY);
 	void move(const Vector2f& offset);
 	void moveBack();
+
+	Vector2f getRandomPosition() const;
+	static float computeDistance(const Vector2f& origin, const Vector2f& destination);
 
 	virtual void draw(RenderWindow& renderWindow) const;
 
