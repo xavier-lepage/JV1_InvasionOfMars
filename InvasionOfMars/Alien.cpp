@@ -24,7 +24,10 @@ void Alien::update(float deltaTime)
 {
 	if (isActive())
 	{
-		this->setRotation(radians(atan2f(player->getPosition().y - getPosition().y, player->getPosition().x - getPosition().x)));
+		float angle = atan2f(player->getPosition().y - getPosition().y, player->getPosition().x - getPosition().x);
+
+		this->setRotation(radians(angle));
+		this->move(cos(angle) * ALIEN_SPEED * deltaTime, sin(angle) * ALIEN_SPEED * deltaTime);
 	}
 }
 
