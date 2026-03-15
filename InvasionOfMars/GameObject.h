@@ -14,7 +14,7 @@ public:
 	void setTexture(const Texture& texture);
 
 	void activate();
-	void deactivate();
+	virtual void deactivate();
 	bool isActive() const;
 
 	void setPosition(const float x, const float y);

@@ -24,7 +24,6 @@ void Bullet::update(const float deltaTime, const FloatRect& currentViewRectangle
 		if (!this->getGlobalBounds().findIntersection(currentViewRectangle).has_value())
 		{
 			this->deactivate();
-			this->addToBulletStack();
 		}
 	}
 }
@@ -38,6 +37,12 @@ void Bullet::shoot(const Vector2f& initialPosition, const Angle& initialAngle)
 	this->bulletMove.y = BULLET_SPEED * sin(initialAngle.asRadians());
 
 	this->activate();
+}
+
+void Bullet::deactivate()
+{
+	GameObject::deactivate();
+	this->addToBulletStack();
 }
 
 void Bullet::addToBulletStack()

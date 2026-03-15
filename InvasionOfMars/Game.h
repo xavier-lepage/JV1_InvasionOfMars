@@ -50,6 +50,7 @@ private:
 	void drawAliens();
 
 	void fire();
+	void handleProjectileCollisions();
 
 	RenderWindow renderWindow;
 	View mainView;

@@ -134,6 +134,8 @@ void Game::update()
 	if (alienSpawnTimer > 0) alienSpawnTimer -= deltaTime;
 	spawnAliens();
 	updateAliens();
+
+	handleProjectileCollisions();
 }
 
 void Game::draw()
@@ -169,6 +171,28 @@ void Game::fire()
 		);
 	}
 }
+
+void Game::handleProjectileCollisions()
+{
+	for (int i = 0; i < BULLET_COUNT; i++)
+	{
+		if (bullets[i].isActive())
+		{
+			for (int j = 0; j < ALIEN_COUNT; j++)
+			{
+				if (aliens[j].isActive())
+				{
+					if (bullets[i].getCollisionCircle().checkCollision(aliens[j].getCollisionCircle()))
+					{
+						bullets[i].deactivate();
+						aliens[j].deactivate();
+					}
+				}
+			}
+		}
+	}
+}
+
 
 void Game::initBullets()
 {

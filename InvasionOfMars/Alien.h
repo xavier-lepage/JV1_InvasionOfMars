@@ -10,6 +10,7 @@ public:
 	void update(float deltaTime);
 	Vector2f findSpawnPosition() const;
 	void spawn();
+	void deactivate() override;
 	static Alien* getAvailableAlien();
 
 private:
