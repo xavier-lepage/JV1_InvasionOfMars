@@ -63,6 +63,10 @@ private:
 	float recoilTimer;
 	float alienSpawnTimer;
 
+
+	unsigned int remainingLives = PLAYER_LIFE_COUNT;
+	unsigned int score = 0;
+
 	Inputs inputs;
 
 	Hud hud;

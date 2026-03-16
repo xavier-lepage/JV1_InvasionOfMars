@@ -47,7 +47,7 @@ bool Game::init()
 	field->setColor(Color(193, 68, 14, 255)); //Couleur "Rouge sol de Mars"
 
 	player.init();
-	player.setPosition(WORLD_CENTER_X, WORLD_CENTER_Y);
+	player.setPosition((float)WORLD_CENTER_X, (float)WORLD_CENTER_Y);
 	player.setCollisionCircleRadius(PLAYER_RADIUS);
 
 	topBound = player.getTexture().getSize().y / 2.0f;
@@ -138,6 +138,8 @@ void Game::update()
 
 	handleProjectileCollisions();
 	handlePlayerCollisions();
+
+	hud.update(remainingLives, score);
 }
 
 void Game::draw()
