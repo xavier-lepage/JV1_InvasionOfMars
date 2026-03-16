@@ -11,6 +11,7 @@
 
 using namespace sf;
 using std::optional;
+using std::min;
 
 class Game
 {
@@ -48,11 +49,15 @@ private:
 	void spawnAliens();
 	void updateAliens();
 	void drawAliens();
+	void onAlienDeath(Bullet& bullet, Alien& alien);
+
+	void increaseScore();
 
 	void fire();
 	void handleProjectileCollisions();
 
 	void handlePlayerCollisions();
+	void onPlayerDeath();
 
 	RenderWindow renderWindow;
 	View mainView;
@@ -62,6 +67,12 @@ private:
 	float deltaTime;
 	float recoilTimer;
 	float alienSpawnTimer;
+
+	float comboTimer;
+	unsigned int currentCombo = 0;
+
+	unsigned int remainingLives = PLAYER_LIFE_COUNT;
+	unsigned int score = 0;
 
 	Inputs inputs;
 

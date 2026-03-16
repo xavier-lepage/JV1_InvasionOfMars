@@ -3,7 +3,7 @@
 #include "Constants.h"
 
 Player::Player()
-	: remainingLives(PLAYER_LIFE_COUNT), respawnTimer(0.0f), invincibilityTimer(0.0f)
+	: respawnTimer(0.0f), invincibilityTimer(0.0f)
 {
 }
 
@@ -38,7 +38,6 @@ void Player::kill()
 {
 	if (!this->isActive() || this->isInvincible()) return;
 
-	remainingLives--;
 	this->deactivate();
 	this->respawnTimer = PLAYER_RESPAWN_COOLDOWN;
 }

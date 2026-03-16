@@ -20,6 +20,12 @@ const float ALIEN_SPAWN_COOLDOWN = 0.33f;
 const float MIN_ALIEN_DISTANCE = 100.0f;
 const float ALIEN_SPEED = 200.0f;
 
+static const unsigned int SCORE_INCREMENT = 100;
+static const unsigned int MAX_SCORE_INCREMENT = 500;
+static const unsigned int COMBO_INCREMENT = 10;
+static const unsigned int LIFE_GAIN_SCORE_TRESHOLD = 50000;
+const float COMBO_DURATION = 1.0f;
+
 static const unsigned int BULLET_COUNT = 12;
 const float BULLET_RECOIL = 0.1f;
 static const unsigned int BULLET_TEXTURE_ID = 1;
