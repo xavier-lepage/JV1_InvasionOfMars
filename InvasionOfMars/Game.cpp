@@ -135,6 +135,7 @@ void Game::update()
 	if (alienSpawnTimer > 0.0f) alienSpawnTimer -= deltaTime;
 	spawnAliens();
 	updateAliens();
+	comboTimer -= deltaTime;
 
 	handleProjectileCollisions();
 	handlePlayerCollisions();
@@ -176,6 +177,13 @@ void Game::fire()
 	}
 }
 
+void Game::onPlayerDeath()
+{
+	if (!player.isActive() || player.isInvincible()) return;
+	remainingLives--;
+	player.kill();
+}
+
 void Game::handleProjectileCollisions()
 {
 	for (int i = 0; i < BULLET_COUNT; i++)
@@ -187,14 +195,33 @@ void Game::handleProjectileCollisions()
 				if (aliens[j].isActive())
 				{
 					if (bullets[i].isCircleColliding(aliens[j]))
-					{
-						bullets[i].deactivate();
-						aliens[j].deactivate();
-					}
+						onAlienDeath(bullets[i], aliens[j]);
 				}
 			}
 		}
 	}
+}
+
+void Game::onAlienDeath(Bullet& bullet, Alien& alien)
+{
+	bullet.deactivate();
+	alien.deactivate();
+
+	increaseScore();
+}
+
+void Game::increaseScore()
+{
+	int lastScore = score;
+
+	currentCombo++;
+	if (comboTimer < 0.0f) currentCombo = 0;
+	comboTimer = COMBO_DURATION;
+
+	score += min(SCORE_INCREMENT + (currentCombo * COMBO_INCREMENT), MAX_SCORE_INCREMENT);
+
+	if (lastScore / LIFE_GAIN_SCORE_TRESHOLD < score / LIFE_GAIN_SCORE_TRESHOLD) 
+		remainingLives++;
 }
 
 void Game::handlePlayerCollisions()
@@ -202,7 +229,7 @@ void Game::handlePlayerCollisions()
 	for (int i = 0; i < ALIEN_COUNT; i++)
 	{
 		if (aliens[i].isActive())
-			if (player.isCircleColliding(aliens[i])) player.kill();
+			if (player.isCircleColliding(aliens[i])) onPlayerDeath();
 	}
 }
 
