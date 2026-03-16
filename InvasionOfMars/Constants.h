@@ -27,5 +27,5 @@ static const unsigned int LIFE_GAIN_SCORE_TRESHOLD = 50000;
 const float COMBO_DURATION = 1.0f;
 
 static const unsigned int BULLET_COUNT = 12;
-const float BULLET_RECOIL = 0.1f;
+const float BULLET_RECOIL = 1.0f/6.0f;
 static const unsigned int BULLET_TEXTURE_ID = 1;

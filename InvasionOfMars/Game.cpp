@@ -85,6 +85,9 @@ void Game::getInputs()
 		inputs.aim.x = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::U));
 		inputs.aim.y = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::V));
 
+		float fire = inputs.manageGamepadAxis(Joystick::getAxisPosition(0, Joystick::Axis::Z));
+		if (fire < 0.0f) inputs.fire = (bool)fire;
+
 		if (inputs.aim.x != 0.0f || inputs.aim.y != 0.0f)
 		{
 			inputs.aimAngle = radians(atan2f(inputs.aim.y, inputs.aim.x));
