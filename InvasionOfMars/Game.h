@@ -60,6 +60,7 @@ private:
 	void onPlayerDeath();
 
 	void managePause();
+	void manageGameOver();
 
 	RenderWindow renderWindow;
 	View mainView;
@@ -77,6 +78,7 @@ private:
 	unsigned int score = 0;
 
 	bool isPaused = false;
+	bool isGameOver = false;
 
 	Inputs inputs;
 

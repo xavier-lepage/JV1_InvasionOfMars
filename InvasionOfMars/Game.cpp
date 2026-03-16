@@ -128,9 +128,10 @@ void Game::getInputs()
 void Game::update()
 {
 	managePause();
-	hud.update(remainingLives, score, isPaused);
+	hud.update(remainingLives, score, isPaused, isGameOver);
 
-	if (isPaused) return;
+	if (isPaused || isGameOver) return;
+
 	currentViewRectangle = FloatRect(
 		mainView.getCenter() - mainView.getSize() / 2.0f,
 		mainView.getSize()
@@ -197,7 +198,9 @@ void Game::fire()
 void Game::onPlayerDeath()
 {
 	if (!player.isActive() || player.isInvincible()) return;
+
 	remainingLives--;
+	manageGameOver();
 	player.kill();
 }
 
@@ -344,5 +347,13 @@ void Game::managePause()
 			music.pause();
 		else
 			music.play();
+	}
+}
+
+void Game::manageGameOver()
+{
+	if (remainingLives == 0) {
+		isGameOver = true;
+		music.stop();
 	}
 }

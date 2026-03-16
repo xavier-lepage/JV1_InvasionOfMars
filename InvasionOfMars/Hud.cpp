@@ -10,6 +10,7 @@ Hud::~Hud()
 	if (lives != nullptr) delete lives;
 	if (score != nullptr) delete score;
 	if (pause != nullptr) delete pause;
+	if (gameOver != nullptr) delete gameOver;
 }
 
 void Hud::hudInit()
@@ -24,9 +25,12 @@ void Hud::hudInit()
 
 	pause = new Text(ContentPipeline::getInstance().getFont(), "PAUSE", 64U);
 	pause->setPosition({ 520.0f, 320.0f });
+
+	gameOver = new Text(ContentPipeline::getInstance().getFont(), "Game Over", 64U);
+	gameOver->setPosition({ 460.0f, 320.0f });
 }
 
-void Hud::update(const unsigned int lives, const unsigned int score, const bool isPaused)
+void Hud::update(const unsigned int lives, const unsigned int score, const bool isPaused, const bool isGameOver)
 {
 	this->lives->setString("Lives X " + to_string(lives));
 	this->score->setString("Score " + to_string(score));
@@ -34,6 +38,11 @@ void Hud::update(const unsigned int lives, const unsigned int score, const bool 
 		this->pause->setFillColor(Color::White);
 	else
 		this->pause->setFillColor(Color::Transparent);
+
+	if (isGameOver)
+		this->gameOver->setFillColor(Color::White);
+	else
+		this->gameOver->setFillColor(Color::Transparent);
 }
 
 void Hud::draw(RenderWindow& renderWindow)
@@ -41,4 +50,5 @@ void Hud::draw(RenderWindow& renderWindow)
 	renderWindow.draw(*lives);
 	renderWindow.draw(*score);
 	renderWindow.draw(*pause);
+	renderWindow.draw(*gameOver);
 }
