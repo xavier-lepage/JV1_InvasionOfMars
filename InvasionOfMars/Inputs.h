@@ -17,6 +17,7 @@ struct Inputs
 
 	bool rotated;
 	bool fire;
+	bool pause;
 
 	Inputs()
 	{
@@ -31,6 +32,7 @@ struct Inputs
 
 		rotated = false;
 		fire = false;
+		pause = false;
 	}	
 
 	float manageGamepadAxis(const float axisValue)

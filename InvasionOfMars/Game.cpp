@@ -75,6 +75,18 @@ void Game::getInputs()
 	{
 		//x sur la fenêtre
 		if (event->is<Event::Closed>())	renderWindow.close();
+
+		if (const Event::JoystickButtonPressed* joystickButtonPressed = event->getIf<Event::JoystickButtonPressed>())
+		{
+			if (joystickButtonPressed->button == 7) inputs.pause = true;
+		}
+
+		if (Joystick::isConnected(0)) continue;
+
+		if (const Event::KeyPressed* keyPressed = event->getIf<Event::KeyPressed>())
+		{
+			if (keyPressed->scancode == Keyboard::Scan::P) inputs.pause = true;
+		}
 	}
 
 	if (Joystick::isConnected(0))
@@ -115,6 +127,10 @@ void Game::getInputs()
 //Vous devrez centrer la vue sur le player: https://www.sfml-dev.org/tutorials/2.6/graphics-view-fr.php
 void Game::update()
 {
+	managePause();
+	hud.update(remainingLives, score, isPaused);
+
+	if (isPaused) return;
 	currentViewRectangle = FloatRect(
 		mainView.getCenter() - mainView.getSize() / 2.0f,
 		mainView.getSize()
@@ -142,8 +158,6 @@ void Game::update()
 
 	handleProjectileCollisions();
 	handlePlayerCollisions();
-
-	hud.update(remainingLives, score);
 }
 
 void Game::draw()
@@ -318,4 +332,17 @@ void Game::drawAliens()
 {
 	for (int i = 0; i < ALIEN_COUNT; i++)
 		aliens[i].draw(renderWindow);
+}
+
+void Game::managePause()
+{
+	if (inputs.pause)
+	{
+		isPaused = !isPaused;
+
+		if (isPaused) 
+			music.pause();
+		else
+			music.play();
+	}
 }
