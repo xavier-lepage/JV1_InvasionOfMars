@@ -1,7 +1,6 @@
 #include "Bullet.h"
 #include "ContentPipeline.h"
 
-const float Bullet::BULLET_SPEED = 1200.0f;
 std::stack<Bullet*> Bullet::bulletStack;
 
 Bullet::Bullet()

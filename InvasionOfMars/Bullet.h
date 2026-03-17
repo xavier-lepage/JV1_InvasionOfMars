@@ -3,8 +3,6 @@
 #include <SFML/Audio.hpp>
 #include "GameObject.h"
 
-using namespace sf;
-
 class Bullet : public GameObject
 {
 public:
@@ -17,8 +15,6 @@ public:
 
 private:
 	void addToBulletStack();
-
-	static const float BULLET_SPEED;
 
 	static std::stack<Bullet*> bulletStack;
 

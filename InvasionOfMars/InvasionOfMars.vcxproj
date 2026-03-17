@@ -169,6 +169,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Alien.cpp" />
+    <ClCompile Include="Boost.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="CollisionCircle.cpp" />
     <ClCompile Include="ContentPipeline.cpp" />
@@ -176,10 +177,14 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Hud.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Nuke.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Alien.h" />
+    <ClInclude Include="Boost.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionCircle.h" />
     <ClInclude Include="Constants.h" />
@@ -188,7 +193,10 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Hud.h" />
     <ClInclude Include="Inputs.h" />
+    <ClInclude Include="Math.h" />
+    <ClInclude Include="Nuke.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PowerUp.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Ressources\Fonts\segoepr.ttf" />

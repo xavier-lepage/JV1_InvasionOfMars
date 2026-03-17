@@ -27,5 +27,13 @@ static const unsigned int LIFE_GAIN_SCORE_TRESHOLD = 50000;
 const float COMBO_DURATION = 1.0f;
 
 static const unsigned int BULLET_COUNT = 12;
-const float BULLET_RECOIL = 1.0f/6.0f;
 static const unsigned int BULLET_TEXTURE_ID = 1;
+const float BULLET_SPEED = 1200.0f;
+const float BULLET_RECOIL = 1.0f/6.0f;
+
+const float POWERUP_DURATION = 15.0f;
+const float POWERUP_CHANCE = 0.04f;
+static const unsigned int BOOST_COUNT = 6;
+static const unsigned int NUKE_COUNT = 6;
+static const unsigned int BOOST_ID = 0;
+static const unsigned int NUKE_ID = 1;

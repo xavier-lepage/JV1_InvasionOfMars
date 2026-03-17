@@ -3,11 +3,14 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Constants.h"
+#include "Math.h"
 #include "Inputs.h"
 #include "Player.h"
 #include "Alien.h"
 #include "Hud.h"
 #include "Bullet.h"
+#include "Boost.h"
+#include "Nuke.h"
 
 using namespace sf;
 using std::optional;
@@ -51,6 +54,11 @@ private:
 	void drawAliens();
 	void onAlienDeath(Bullet& bullet, Alien& alien);
 
+	void rollPowerUp(const Alien& alien);
+	void initPowerUps();
+	void updatePowerUps();
+	void drawPowerUps();
+
 	void increaseScore();
 
 	void fire();
@@ -91,6 +99,9 @@ private:
 	Bullet bullets[BULLET_COUNT];
 
 	Alien aliens[ALIEN_COUNT];
+
+	Boost boosts[BOOST_COUNT];
+	Nuke nukes[NUKE_COUNT];
 
 	FloatRect currentViewRectangle;
 

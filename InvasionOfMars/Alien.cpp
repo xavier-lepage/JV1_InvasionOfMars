@@ -10,9 +10,9 @@ Alien::Alien()
 	this->addToAlienStack();
 }
 
-void Alien::init(const int alienTextureNumber)
+void Alien::init(const unsigned int alienTextureID)
 {
-	this->setTexture(ContentPipeline::getInstance().getAlienTexture(alienTextureNumber));
+	this->setTexture(ContentPipeline::getInstance().getAlienTexture(alienTextureID));
 }
 
 void Alien::setPlayer(const GameObject* player)
@@ -58,7 +58,7 @@ Vector2f Alien::findSpawnPosition() const
 	do
 	{
 		position = getRandomPosition();
-		distance = computeDistance(player->getPosition(), position);
+		distance = Math::computeDistance(player->getPosition(), position);
 	} while (distance < MIN_ALIEN_DISTANCE);
 
 	return position;
