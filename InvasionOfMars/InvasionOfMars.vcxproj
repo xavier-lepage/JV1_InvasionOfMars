@@ -169,6 +169,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Alien.cpp" />
+    <ClCompile Include="Boost.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="CollisionCircle.cpp" />
     <ClCompile Include="ContentPipeline.cpp" />
@@ -182,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Alien.h" />
+    <ClInclude Include="Boost.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionCircle.h" />
     <ClInclude Include="Constants.h" />
