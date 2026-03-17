@@ -59,6 +59,9 @@ private:
 	void handlePlayerCollisions();
 	void onPlayerDeath();
 
+	void managePause();
+	void manageGameOver();
+
 	RenderWindow renderWindow;
 	View mainView;
 	View hudView;
@@ -73,6 +76,9 @@ private:
 
 	unsigned int remainingLives = PLAYER_LIFE_COUNT;
 	unsigned int score = 0;
+
+	bool isPaused = false;
+	bool isGameOver = false;
 
 	Inputs inputs;
 
