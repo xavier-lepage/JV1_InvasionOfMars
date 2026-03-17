@@ -108,16 +108,7 @@ Vector2f GameObject::getRandomPosition() const
 	int collisionCircleRadius = (int)this->getCollisionCircleRadius();
 	return
 	{
-		// Source consultée pour la génération de nombres aléatoires:
-		// https://www.geeksforgeeks.org/c/generating-random-number-range-c/
-		(float)(collisionCircleRadius + rand() % (WORLD_WIDTH - 2 * collisionCircleRadius + 1)),
-		(float)(collisionCircleRadius + rand() % (WORLD_HEIGHT - 2 * collisionCircleRadius + 1))
+		Math::generateRandomFloat(collisionCircleRadius, WORLD_WIDTH),
+		Math::generateRandomFloat(collisionCircleRadius, WORLD_HEIGHT)
 	};
-}
-
-float GameObject::computeDistance(const Vector2f& origin, const Vector2f& destination)
-{
-	// Documentation consultée pour les méthodes et opérateurs surchargés de Vector2:
-	// https://www.sfml-dev.org/documentation/3.0.2/classsf_1_1Vector2.html
-	return (destination - origin).length();
 }

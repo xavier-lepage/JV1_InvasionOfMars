@@ -1,6 +1,5 @@
 #include "Player.h"
 #include "ContentPipeline.h"
-#include "Constants.h"
 
 Player::Player()
 	: respawnTimer(0.0f), invincibilityTimer(0.0f)

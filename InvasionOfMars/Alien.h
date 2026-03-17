@@ -5,7 +5,7 @@ class Alien : public GameObject
 {
 public:
 	Alien();
-	void init(const int alienTextureNumber);
+	void init(const unsigned int alienTextureID);
 	static void setPlayer(const GameObject* player);
 	void update(float deltaTime);
 	Vector2f findSpawnPosition() const;
