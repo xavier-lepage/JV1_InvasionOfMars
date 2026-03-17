@@ -57,6 +57,7 @@ bool Game::init()
 
 	initBullets();
 	initAliens();
+	initPowerUps();
 
 	hud.hudInit();	
 
@@ -157,6 +158,8 @@ void Game::update()
 	updateAliens();
 	comboTimer -= deltaTime;
 
+	updatePowerUps();
+
 	handleProjectileCollisions();
 	handlePlayerCollisions();
 }
@@ -167,6 +170,7 @@ void Game::draw()
 	renderWindow.setView(mainView);
 	renderWindow.draw(*field);
 
+	drawPowerUps();
 	drawBullets();
 	drawAliens();
 
@@ -222,10 +226,55 @@ void Game::handleProjectileCollisions()
 	}
 }
 
+void Game::initPowerUps()
+{
+	for (int i = 0; i < BOOST_COUNT; i++)
+		boosts[i].init();
+
+	for (int i = 0; i < NUKE_COUNT; i++)
+		nukes[i].init();
+}
+
+void Game::updatePowerUps()
+{
+	for (int i = 0; i < BOOST_COUNT; i++)
+		boosts[i].update(deltaTime);
+
+	for (int i = 0; i < NUKE_COUNT; i++)
+		nukes[i].update(deltaTime);
+}
+
+void Game::drawPowerUps()
+{
+	for (int i = 0; i < BOOST_COUNT; i++)
+		boosts[i].draw(renderWindow);
+
+	for (int i = 0; i < NUKE_COUNT; i++)
+		nukes[i].draw(renderWindow);
+}
+
+void Game::rollPowerUp(const Alien& alien)
+{
+	float roll = Math::generateRandomFloat(0, 100) / 100.0f;
+	if (roll < POWERUP_CHANCE)
+	{
+		PowerUp* powerUp = nullptr;
+
+		if (Math::generateRandomBool())
+			powerUp = Nuke::getAvailableNuke();
+		else
+			powerUp = Boost::getAvailableBoost();
+
+		if (powerUp != nullptr) powerUp->spawn(alien.getPosition());
+	}
+}
+
 void Game::onAlienDeath(Bullet& bullet, Alien& alien)
 {
 	bullet.deactivate();
 	alien.deactivate();
+
+	rollPowerUp(alien);
 
 	increaseScore();
 }
@@ -316,6 +365,7 @@ void Game::initAliens()
 void Game::spawnAliens()
 {
 	if (alienSpawnTimer > 0) return;
+
 	Alien* alien = Alien::getAvailableAlien();
 	if (alien != nullptr)
 	{
