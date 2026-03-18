@@ -9,7 +9,6 @@ public:
 	static Nuke* getAvailableNuke();
 
 private:
-	void despawn() override;
 	void addToStack() override;
 
 	static std::stack<Nuke*> nukeStack;

@@ -9,7 +9,6 @@ public:
 	static Boost* getAvailableBoost();
 
 private:
-	void despawn() override;
 	void addToStack() override;
 
 	static std::stack<Boost*> boostStack;

@@ -8,9 +8,9 @@ public:
 	virtual void init() = 0;
 	void update(const float deltaTime);
 	void spawn(const Vector2f& spawnPosition);
+	void despawn();
 
 private:
-	void despawn();
 	virtual void addToStack() = 0;
 
 	float despawnTimer;
