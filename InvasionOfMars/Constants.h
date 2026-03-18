@@ -15,6 +15,9 @@ static const unsigned int PLAYER_LIFE_COUNT = 5;
 static const unsigned int PLAYER_DEFAULT_OPACITY = 255;
 static const unsigned int PLAYER_INVINCIBLE_OPACITY = 160;
 
+const float BOOST_DURATION = 5.0f;
+const float PLAYER_BOOST_SPEED = 400.0f;
+
 static const unsigned int ALIEN_COUNT = 60;
 const float ALIEN_SPAWN_COOLDOWN = 0.33f;
 const float MIN_ALIEN_DISTANCE = 100.0f;
@@ -27,9 +30,14 @@ static const unsigned int LIFE_GAIN_SCORE_TRESHOLD = 50000;
 const float COMBO_DURATION = 1.0f;
 
 static const unsigned int BULLET_COUNT = 12;
-static const unsigned int BULLET_TEXTURE_ID = 1;
+static const unsigned int BULLET_ID = 1;
 const float BULLET_SPEED = 1200.0f;
-const float BULLET_RECOIL = 1.0f/6.0f;
+const float BULLET_RECOIL = 1.0f / 6.0f;
+
+static const unsigned int BLAST_COUNT = 4;
+static const unsigned int BLAST_ID = 0;
+const float BLAST_SPEED = 800.0f;
+const float BLAST_RECOIL = 1.0f / 3.0f;
 
 const float POWERUP_DURATION = 15.0f;
 const float POWERUP_CHANCE = 0.04f;

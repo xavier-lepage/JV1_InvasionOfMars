@@ -42,7 +42,6 @@ private:
 	void computeDeltaTime();
 
 	void ajustCrossingWorldLimits();
-	void keepPlayerInbound();
 
 	void initBullets();
 	void updateBullets();
@@ -52,7 +51,7 @@ private:
 	void spawnAliens();
 	void updateAliens();
 	void drawAliens();
-	void onAlienDeath(Bullet& bullet, Alien& alien);
+	void onAlienDeath(Alien& alien);
 
 	void rollPowerUp(const Alien& alien);
 	void initPowerUps();
@@ -69,6 +68,9 @@ private:
 
 	void managePause();
 	void manageGameOver();
+
+	void onCollectBoost(Boost& boost);
+	bool isBoosted();
 
 	RenderWindow renderWindow;
 	View mainView;
@@ -97,6 +99,7 @@ private:
 	Player player;
 
 	Bullet bullets[BULLET_COUNT];
+	Bullet blasts[BLAST_COUNT];
 
 	Alien aliens[ALIEN_COUNT];
 
@@ -104,9 +107,4 @@ private:
 	Nuke nukes[NUKE_COUNT];
 
 	FloatRect currentViewRectangle;
-
-	float topBound;
-	float bottomBound;
-	float rightBound;
-	float leftBound;
 };
