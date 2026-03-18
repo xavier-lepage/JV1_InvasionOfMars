@@ -20,7 +20,7 @@ const float PLAYER_BOOST_SPEED = 400.0f;
 
 static const unsigned int ALIEN_COUNT = 60;
 const float ALIEN_SPAWN_COOLDOWN = 0.33f;
-const float MIN_ALIEN_DISTANCE = 100.0f;
+const float MIN_ALIEN_DISTANCE = 200.0f;
 const float ALIEN_SPEED = 200.0f;
 
 static const unsigned int SCORE_INCREMENT = 100;

@@ -24,15 +24,19 @@ void Alien::update(float deltaTime)
 {
 	if (isActive())
 	{
-		float angle;
+		if (!player->isActive() || Math::computeDistance(player->getPosition(), this->getPosition()) > ALIEN_SPEED * deltaTime)
+		{
+			float angle;
 
-		if (player->isActive())
-			angle = atan2f(player->getPosition().y - getPosition().y, player->getPosition().x - getPosition().x);
-		else
-			angle = atan2f(getPosition().y - player->getPosition().y, getPosition().x - player->getPosition().x);
+			if (player->isActive())
+				angle = atan2f(player->getPosition().y - getPosition().y, player->getPosition().x - getPosition().x);
+			else
+				angle = atan2f(getPosition().y - player->getPosition().y, getPosition().x - player->getPosition().x);
 
-		this->setRotation(radians(angle));
-		this->move(cos(angle) * ALIEN_SPEED * deltaTime, sin(angle) * ALIEN_SPEED * deltaTime);
+			this->setRotation(radians(angle));
+
+			this->move(cos(angle) * ALIEN_SPEED * deltaTime, sin(angle) * ALIEN_SPEED * deltaTime);
+		}
 	}
 }
 
@@ -57,7 +61,7 @@ Vector2f Alien::findSpawnPosition() const
 
 	do
 	{
-		position = getRandomPosition();
+		position = this->getRandomPosition();
 		distance = Math::computeDistance(player->getPosition(), position);
 	} while (distance < MIN_ALIEN_DISTANCE);
 
