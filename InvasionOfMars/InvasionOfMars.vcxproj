@@ -197,6 +197,7 @@
     <ClInclude Include="Nuke.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PowerUp.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Ressources\Fonts\segoepr.ttf" />
@@ -214,6 +215,7 @@
     <None Include="Ressources\Sounds\SpaceShots\ToggleSound.ogg" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Ressources\icon.ico" />
     <Image Include="Ressources\Sprites\Backgrounds\MoonReflectiveBackground.png" />
     <Image Include="Ressources\Sprites\Logos\BoostLogo.png" />
     <Image Include="Ressources\Sprites\Logos\NukeLogo.png" />
@@ -223,6 +225,9 @@
     <Image Include="Ressources\Sprites\SpacemanAndAliens\Alien2.png" />
     <Image Include="Ressources\Sprites\SpacemanAndAliens\Alien3.png" />
     <Image Include="Ressources\Sprites\SpacemanAndAliens\Spaceman.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="InvasionOfMars.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
