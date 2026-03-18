@@ -2,21 +2,12 @@
 #include "ContentPipeline.h"
 
 Game::Game()
-{
-	renderWindow.create(VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }, 32), "Invasion of Mars");// , Style::None, State::Fullscreen);
-	
-	
+{	
 	mainView = View(FloatRect({ 0.0f, 0.0f }, { SCREEN_WIDTH, SCREEN_HEIGHT }));
 	mainView.setCenter({ WORLD_WIDTH / 2.0f , WORLD_HEIGHT / 2.0f });
 
 	hudView = View(FloatRect({ 0.0f, 0.0f }, { SCREEN_WIDTH, SCREEN_HEIGHT }));
 
-	//Synchonisation coordonnée à l'écran!  Normalement 60 frames par secondes. À faire absolument
-	//renderWindow.setVerticalSyncEnabled(true);  //De plus en plus d'écrans sont rafraichis à plus de 60 frames par seconde, alors attention.
-	renderWindow.setFramerateLimit(60);  //Équivalent... normalement, mais pas toujours. À utiliser si la synchonisation de l'écran fonctionne mal.
-	//https://www.sfml-dev.org/tutorials/3.0/window/window/#controlling-the-framerate
-
-	renderWindow.setKeyRepeatEnabled(false);
 	srand((int)time(0));  //Pour générer le seed random
 }
 
@@ -58,7 +49,29 @@ bool Game::init()
 	player.activate();
 	music.setLooping(true);
 	music.play();
+
+	initRenderWindow();
 	return true;
+}
+
+void Game::initRenderWindow()
+{
+	/*	Documentation consultée pour la fonctionnalité de plein écran:
+	*	https://www.sfml-dev.org/documentation/3.0.2/classsf_1_1RenderWindow.html
+	*	https://www.sfml-dev.org/documentation/3.0.2/group__window.html#gga504e2cd8fc6a852463f8d049db1151e5ab13311ab51c4c34757f67f26580018dd
+	* 
+	*	Documentation consultée pour configurer l'icône sur la fenêtre:
+	*	https://www.sfml-dev.org/documentation/3.0.2/classsf_1_1RenderWindow.html
+	*	https://www.sfml-dev.org/documentation/3.0.2/classsf_1_1RenderWindow.html#aba4d2434d6c2d058485d8a35b10afb25
+	*/
+	if (isFullscreen)
+		renderWindow.create(VideoMode::getDesktopMode(), "Invasion of Mars", State::Fullscreen);
+	else
+		renderWindow.create(VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }, 32), "Invasion of Mars");
+
+	renderWindow.setFramerateLimit(144);
+	renderWindow.setKeyRepeatEnabled(false);
+	renderWindow.setIcon(ContentPipeline::getInstance().getGameIcon());
 }
 
 void Game::getInputs()
@@ -73,6 +86,7 @@ void Game::getInputs()
 
 		if (const Event::JoystickButtonPressed* joystickButtonPressed = event->getIf<Event::JoystickButtonPressed>())
 		{
+			if (joystickButtonPressed->button == 6) inputs.toggleFullscreen = true;
 			if (joystickButtonPressed->button == 7) inputs.pause = true;
 		}
 
@@ -80,6 +94,7 @@ void Game::getInputs()
 
 		if (const Event::KeyPressed* keyPressed = event->getIf<Event::KeyPressed>())
 		{
+			if (keyPressed->scancode == Keyboard::Scan::F) inputs.toggleFullscreen = true;
 			if (keyPressed->scancode == Keyboard::Scan::P) inputs.pause = true;
 		}
 	}
@@ -124,6 +139,12 @@ void Game::update()
 {
 	managePause();
 	hud.update(remainingLives, score, isPaused, isGameOver);
+
+	if (inputs.toggleFullscreen)
+	{
+		isFullscreen = !isFullscreen;
+		initRenderWindow();
+	}
 
 	if (isPaused || isGameOver) return;
 

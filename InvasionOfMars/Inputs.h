@@ -18,6 +18,7 @@ struct Inputs
 	bool rotated;
 	bool fire;
 	bool pause;
+	bool toggleFullscreen;
 
 	Inputs()
 	{
@@ -33,6 +34,7 @@ struct Inputs
 		rotated = false;
 		fire = false;
 		pause = false;
+		toggleFullscreen = false;
 	}	
 
 	float manageGamepadAxis(const float axisValue)

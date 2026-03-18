@@ -23,6 +23,8 @@ bool ContentPipeline::loadContent()
 	if (!projectileTexture[0].loadFromFile("Ressources\\Sprites\\Projectiles\\Blast.png")) return false;
 	if (!projectileTexture[1].loadFromFile("Ressources\\Sprites\\Projectiles\\Bullet.png")) return false;
 
+	if (!gameIcon.loadFromFile("Ressources\\Sprites\\SpacemanAndAliens\\Alien3.png")) return false;
+
 	if (!hordeBuffer.loadFromFile("Ressources\\Sounds\\Characters\\Horde.ogg")) return false;
 	if (!alienDeathBuffer.loadFromFile("Ressources\\Sounds\\Characters\\AlienDeath.ogg")) return false;
 	if (!playerDeathBuffer.loadFromFile("Ressources\\Sounds\\Characters\\PlayerDeath.ogg")) return false;
@@ -41,6 +43,8 @@ const Texture& ContentPipeline::getPlayerTexture() const { return playerTexture;
 const Texture& ContentPipeline::getLogoTexture(const int logoNumber) const { return logoTexture[logoNumber]; }
 const Texture& ContentPipeline::getProjectileTexture(const int projectileNumber) const { return projectileTexture[projectileNumber]; }
 const Texture& ContentPipeline::getAlienTexture(const int alienTextureNumber) const { return alienTexture[alienTextureNumber]; }
+
+const Image& ContentPipeline::getGameIcon() const { return gameIcon; }
 
 const SoundBuffer& ContentPipeline::getHordeBuffer() const { return hordeBuffer; }
 const SoundBuffer& ContentPipeline::getAlienDeathBuffer() const { return alienDeathBuffer; }

@@ -34,6 +34,7 @@ private:
 	const float WORLD_LIMIT_MAX_Y = WORLD_HEIGHT - WORLD_LIMIT_MIN_Y;
 
 	bool init();
+	void initRenderWindow();
 	void getInputs();
 	void update();
 	void draw();
@@ -70,7 +71,6 @@ private:
 	void manageGameOver();
 
 	void onCollectBoost(Boost& boost);
-	bool isBoosted();
 
 	RenderWindow renderWindow;
 	View mainView;
@@ -89,6 +89,7 @@ private:
 
 	bool isPaused = false;
 	bool isGameOver = false;
+	bool isFullscreen = false;
 
 	Inputs inputs;
 

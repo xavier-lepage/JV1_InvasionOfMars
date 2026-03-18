@@ -128,6 +128,9 @@
     <ClInclude Include="Nuke.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="Ressources\Fonts\segoepr.ttf">
@@ -194,5 +197,13 @@
     <Image Include="Ressources\Sprites\SpacemanAndAliens\Spaceman.png">
       <Filter>Fichiers de ressources\Sprites\SpacemanAndAliens</Filter>
     </Image>
+    <Image Include="Ressources\icon.ico">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="InvasionOfMars.rc">
+      <Filter>Fichiers de ressources</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
