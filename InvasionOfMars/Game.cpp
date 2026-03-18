@@ -48,12 +48,6 @@ bool Game::init()
 
 	player.init();
 	player.setPosition((float)WORLD_CENTER_X, (float)WORLD_CENTER_Y);
-	player.setCollisionCircleRadius(PLAYER_RADIUS);
-
-	topBound = player.getTexture().getSize().y / 2.0f;
-	bottomBound = WORLD_HEIGHT - player.getTexture().getSize().y / 2.0f;
-	rightBound = WORLD_WIDTH - player.getTexture().getSize().x / 2.0f;
-	leftBound = player.getTexture().getSize().x / 2.0f;
 
 	initBullets();
 	initAliens();
@@ -141,10 +135,8 @@ void Game::update()
 	//On peut déplacer la vue, mais on peut aussi lui la centrer sur une position précise, 
 	//comme celle du joueur (avec la méthode setCenter).  Quand votre joueur va se déplacer 
 	//vous devrez centrer la vue sur lui.
-	player.move({ inputs.move.x * PLAYER_SPEED * deltaTime, inputs.move.y * PLAYER_SPEED * deltaTime });
 	if (inputs.rotated) player.setRotation(inputs.aimAngle);
-	keepPlayerInbound();
-	player.update(deltaTime);
+	player.update(inputs.move, deltaTime);
 
 	if (recoilTimer > 0.0f) recoilTimer -= deltaTime;
 	if (inputs.fire) fire();
@@ -187,22 +179,36 @@ void Game::fire()
 {
 	if (recoilTimer > 0 || !player.isActive()) return;
 
-	Bullet* bullet = Bullet::getAvailableBullet();
-	if (bullet != nullptr)
+	if (player.isBoosted())
 	{
-		recoilTimer = BULLET_RECOIL;
+		Bullet* blast = Bullet::getAvailableBlast();
+		if (blast != nullptr)
+		{
+			recoilTimer = BLAST_RECOIL;
 
-		bullet->shoot(
-			player.getPosition(),
-			player.getRotation()
-		);
+			blast->shoot(
+				player.getPosition(),
+				player.getRotation()
+			);
+		}
+	}
+	else
+	{
+		Bullet* bullet = Bullet::getAvailableBullet();
+		if (bullet != nullptr)
+		{
+			recoilTimer = BULLET_RECOIL;
+
+			bullet->shoot(
+				player.getPosition(),
+				player.getRotation()
+			);
+		}
 	}
 }
 
 void Game::onPlayerDeath()
 {
-	if (!player.isActive() || player.isInvincible()) return;
-
 	remainingLives--;
 	manageGameOver();
 	player.kill();
@@ -210,16 +216,28 @@ void Game::onPlayerDeath()
 
 void Game::handleProjectileCollisions()
 {
-	for (int i = 0; i < BULLET_COUNT; i++)
+	for (int i = 0; i < ALIEN_COUNT; i++)
 	{
-		if (bullets[i].isActive())
+		if (aliens[i].isActive())
 		{
-			for (int j = 0; j < ALIEN_COUNT; j++)
+			for (int j = 0; j < BULLET_COUNT; j++)
 			{
-				if (aliens[j].isActive())
+				if (bullets[j].isActive())
 				{
-					if (bullets[i].isCircleColliding(aliens[j]))
-						onAlienDeath(bullets[i], aliens[j]);
+					if (aliens[i].isCircleColliding(bullets[j]))
+					{
+						bullets[j].deactivate();
+						onAlienDeath(aliens[i]);
+					}
+				}
+			}
+
+			for (int j = 0; j < BLAST_COUNT; j++)
+			{
+				if (blasts[j].isActive())
+				{
+					if (aliens[i].isCircleColliding(blasts[j]))
+						onAlienDeath(aliens[i]);
 				}
 			}
 		}
@@ -269,9 +287,8 @@ void Game::rollPowerUp(const Alien& alien)
 	}
 }
 
-void Game::onAlienDeath(Bullet& bullet, Alien& alien)
+void Game::onAlienDeath(Alien& alien)
 {
-	bullet.deactivate();
 	alien.deactivate();
 
 	rollPowerUp(alien);
@@ -295,29 +312,62 @@ void Game::increaseScore()
 
 void Game::handlePlayerCollisions()
 {
+	for (int i = 0; i < BOOST_COUNT; i++)
+	{
+		if (boosts[i].isActive())
+			if (player.isCircleColliding(boosts[i])) onCollectBoost(boosts[i]);
+	}
+
+	if (!player.isActive() || player.isInvincible()) return;
+
 	for (int i = 0; i < ALIEN_COUNT; i++)
 	{
 		if (aliens[i].isActive())
-			if (player.isCircleColliding(aliens[i])) onPlayerDeath();
+		{
+			if (player.isCircleColliding(aliens[i]))
+			{
+				if (player.isBoosted())
+				{
+					player.endBoost();
+					onAlienDeath(aliens[i]);
+				}
+				else onPlayerDeath();
+			}
+		}
 	}
+}
+
+void Game::onCollectBoost(Boost& boost)
+{
+	boost.despawn();
+	player.boost();
 }
 
 void Game::initBullets()
 {
 	for (int i = 0; i < BULLET_COUNT; i++)
-		bullets[i].setTexture(ContentPipeline::getInstance().getProjectileTexture(BULLET_TEXTURE_ID));
+		bullets[i].setType(BULLET_ID);
+
+	for (int i = 0; i < BLAST_COUNT; i++)
+		blasts[i].setType(BLAST_ID);
 }
 
 void Game::updateBullets()
 {
 	for (int i = 0; i < BULLET_COUNT; i++)
 		bullets[i].update(deltaTime, currentViewRectangle);
+
+	for (int i = 0; i < BLAST_COUNT; i++)
+		blasts[i].update(deltaTime, currentViewRectangle);
 }
 
 void Game::drawBullets()
 {
 	for (int i = 0; i < BULLET_COUNT; i++)
 		bullets[i].draw(renderWindow);
+
+	for (int i = 0; i < BLAST_COUNT; i++)
+		blasts[i].draw(renderWindow);
 }
 
 bool Game::unload()
@@ -343,15 +393,6 @@ void Game::ajustCrossingWorldLimits()
 		mainView.setCenter({ mainView.getCenter().x, WORLD_LIMIT_MIN_Y });
 	else if (mainView.getCenter().y > WORLD_LIMIT_MAX_Y)
 		mainView.setCenter({ mainView.getCenter().x, WORLD_LIMIT_MAX_Y });
-}
-
-void Game::keepPlayerInbound()
-{
-	if (player.getPosition().x < leftBound) player.setPosition(leftBound, player.getPosition().y);
-	if (player.getPosition().y < topBound) player.setPosition(player.getPosition().x, topBound);
-
-	if (player.getPosition().x > rightBound) player.setPosition(rightBound, player.getPosition().y);
-	if (player.getPosition().y > bottomBound) player.setPosition(player.getPosition().x, bottomBound);
 }
 
 void Game::initAliens()

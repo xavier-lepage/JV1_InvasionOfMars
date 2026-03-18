@@ -2,11 +2,11 @@
 #include "ContentPipeline.h"
 
 std::stack<Bullet*> Bullet::bulletStack;
+std::stack<Bullet*> Bullet::blastStack;
 
 Bullet::Bullet()
 	: bulletMove(Vector2f(0.0f, 0.0f)), bulletSound(new Sound(ContentPipeline::getInstance().getShotBuffer()))
 {
-	this->addToBulletStack();
 }
 
 Bullet::~Bullet()
@@ -39,12 +39,34 @@ void Bullet::shoot(const Vector2f& initialPosition, const Angle& initialAngle)
 void Bullet::deactivate()
 {
 	GameObject::deactivate();
-	this->addToBulletStack();
+
+	if (isBlast)
+		this->addToBlastStack();
+	else
+		this->addToBulletStack();
+}
+
+void Bullet::setType(const unsigned int bulletTypeID)
+{
+	this->setTexture(ContentPipeline::getInstance().getProjectileTexture(bulletTypeID));
+	
+	if (bulletTypeID == BLAST_ID)
+	{
+		this->addToBlastStack();
+		this->speed = BLAST_SPEED;
+		this->isBlast = true;
+	}
+	else this->addToBulletStack();
 }
 
 void Bullet::addToBulletStack()
 {
 	bulletStack.push(this);
+}
+
+void Bullet::addToBlastStack()
+{
+	blastStack.push(this);
 }
 
 Bullet* Bullet::getAvailableBullet()
@@ -54,4 +76,13 @@ Bullet* Bullet::getAvailableBullet()
 	Bullet* bullet = bulletStack.top();
 	bulletStack.pop();
 	return bullet;
+}
+
+Bullet* Bullet::getAvailableBlast()
+{
+	if (blastStack.empty()) return nullptr;
+
+	Bullet* blast = blastStack.top();
+	blastStack.pop();
+	return blast;
 }
