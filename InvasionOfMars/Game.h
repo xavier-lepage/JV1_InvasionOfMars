@@ -71,6 +71,7 @@ private:
 	void manageGameOver();
 
 	void onCollectBoost(Boost& boost);
+	void onCollectNuke(Nuke& nuke);
 
 	RenderWindow renderWindow;
 	View mainView;
