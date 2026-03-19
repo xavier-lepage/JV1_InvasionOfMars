@@ -339,6 +339,12 @@ void Game::handlePlayerCollisions()
 			if (player.isCircleColliding(boosts[i])) onCollectBoost(boosts[i]);
 	}
 
+	for (int i = 0; i < NUKE_COUNT; i++)
+	{
+		if (nukes[i].isActive())
+			if (player.isCircleColliding(nukes[i])) onCollectNuke(nukes[i]);
+	}
+
 	if (!player.isActive() || player.isInvincible()) return;
 
 	for (int i = 0; i < ALIEN_COUNT; i++)
@@ -362,6 +368,19 @@ void Game::onCollectBoost(Boost& boost)
 {
 	boost.despawn();
 	player.boost();
+}
+
+void Game::onCollectNuke(Nuke& nuke)
+{
+	nuke.despawn();
+	for (int i = 0; i < ALIEN_COUNT; i++)
+	{
+		if (aliens[i].isActive())
+		{
+			if (aliens[i].getGlobalBounds().findIntersection(currentViewRectangle).has_value())
+				onAlienDeath(aliens[i]);
+		}
+	}
 }
 
 void Game::initBullets()
