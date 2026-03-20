@@ -1,9 +1,18 @@
 #include "Player.h"
 #include "ContentPipeline.h"
 
-Player::Player()
-	: respawnTimer(0.0f), invincibilityTimer(0.0f)
+Player::Player():
+	respawnTimer(0.0f), 
+	invincibilityTimer(0.0f), 
+	hordeSound(new Sound(ContentPipeline::getInstance().getHordeBuffer())),
+	playerDeathSound(new Sound(ContentPipeline::getInstance().getPlayerDeathBuffer()))
 {
+}
+
+Player::~Player()
+{
+	if (this->hordeSound != nullptr) delete this->hordeSound;
+	if (this->playerDeathSound != nullptr) delete this->playerDeathSound;
 }
 
 void Player::init()
@@ -11,6 +20,7 @@ void Player::init()
 	this->setTexture(ContentPipeline::getInstance().getPlayerTexture());
 	this->setCollisionCircleRadius(PLAYER_RADIUS);
 	this->defineBounds();
+	this->hordeSound->play();
 }
 
 void Player::defineBounds()
@@ -71,6 +81,7 @@ void Player::kill()
 
 	this->deactivate();
 	this->respawnTimer = PLAYER_RESPAWN_COOLDOWN;
+	this->playerDeathSound->play();
 }
 
 void Player::boost()
@@ -87,6 +98,7 @@ void Player::respawn()
 {
 	this->activate();
 	this->invincibilityTimer = PLAYER_INVINCIBILITY_DURATION;
+	this->hordeSound->play();
 }
 
 void Player::setOpacity(int opacity)

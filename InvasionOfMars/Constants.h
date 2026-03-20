@@ -45,3 +45,5 @@ static const unsigned int BOOST_COUNT = 6;
 static const unsigned int NUKE_COUNT = 6;
 static const unsigned int BOOST_ID = 0;
 static const unsigned int NUKE_ID = 1;
+
+static const unsigned int MUSIC_COUNT = 3;

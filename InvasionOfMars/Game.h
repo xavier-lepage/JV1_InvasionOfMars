@@ -15,6 +15,7 @@
 using namespace sf;
 using std::optional;
 using std::min;
+using std::floor;
 
 class Game
 {
@@ -73,6 +74,8 @@ private:
 	void onCollectBoost(Boost& boost);
 	void onCollectNuke(Nuke& nuke);
 
+	bool loadMusic();
+
 	RenderWindow renderWindow;
 	View mainView;
 	View hudView;
@@ -109,4 +112,7 @@ private:
 	Nuke nukes[NUKE_COUNT];
 
 	FloatRect currentViewRectangle;
+
+	Sound* boostTriggerSound = nullptr;
+	Sound* nukeTriggerSound = nullptr;
 };

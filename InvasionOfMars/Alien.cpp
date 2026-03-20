@@ -6,8 +6,14 @@ const GameObject* Alien::player = nullptr;
 std::stack<Alien*> Alien::alienStack;
 
 Alien::Alien()
+	: alienDeathSound(new Sound(ContentPipeline::getInstance().getAlienDeathBuffer()))
 {
 	this->addToAlienStack();
+}
+
+Alien::~Alien()
+{
+	if (this->alienDeathSound != nullptr) delete this->alienDeathSound;
 }
 
 void Alien::init(const unsigned int alienTextureID)
@@ -79,4 +85,5 @@ void Alien::deactivate()
 {
 	GameObject::deactivate();
 	this->addToAlienStack();
+	this->alienDeathSound->play();
 }
