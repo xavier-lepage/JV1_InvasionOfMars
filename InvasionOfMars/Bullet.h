@@ -1,6 +1,4 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 #include "GameObject.h"
 
 class Bullet : public GameObject
@@ -26,5 +24,6 @@ private:
 	bool isBlast = false;
 
 	Sound* bulletSound = nullptr;
+	Sound* blastSound = nullptr;
 	Vector2f bulletMove;
 };

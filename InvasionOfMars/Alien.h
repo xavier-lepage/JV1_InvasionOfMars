@@ -5,6 +5,7 @@ class Alien : public GameObject
 {
 public:
 	Alien();
+	~Alien();
 	void init(const unsigned int alienTextureID);
 	static void setPlayer(const GameObject* player);
 	void update(float deltaTime);
@@ -18,4 +19,6 @@ private:
 
 	static std::stack<Alien*> alienStack;
 	static const GameObject* player;
+
+	Sound* alienDeathSound = nullptr;
 };

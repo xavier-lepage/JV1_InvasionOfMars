@@ -4,21 +4,24 @@
 std::stack<Bullet*> Bullet::bulletStack;
 std::stack<Bullet*> Bullet::blastStack;
 
-Bullet::Bullet()
-	: bulletMove(Vector2f(0.0f, 0.0f)), bulletSound(new Sound(ContentPipeline::getInstance().getShotBuffer()))
+Bullet::Bullet():
+	bulletMove(Vector2f(0.0f, 0.0f)), 
+	bulletSound(new Sound(ContentPipeline::getInstance().getShotBuffer())),
+	blastSound(new Sound(ContentPipeline::getInstance().getBoostedShotBuffer()))
 {
 }
 
 Bullet::~Bullet()
 {
-	if (bulletSound != nullptr) delete bulletSound;
+	if (this->bulletSound != nullptr) delete this->bulletSound;
+	if (this->blastSound != nullptr) delete this->blastSound;
 }
 
 void Bullet::update(const float deltaTime, const FloatRect& currentViewRectangle)
 {
 	if (isActive())
 	{
-		this->move(bulletMove * deltaTime);
+		this->move(this->bulletMove * deltaTime);
 
 		if (!this->getGlobalBounds().findIntersection(currentViewRectangle).has_value())
 			this->deactivate();
@@ -28,19 +31,23 @@ void Bullet::update(const float deltaTime, const FloatRect& currentViewRectangle
 void Bullet::shoot(const Vector2f& initialPosition, const Angle& initialAngle)
 {
 	this->setPosition(initialPosition);
-	this->bulletSound->play();
 
 	this->bulletMove.x = BULLET_SPEED * cos(initialAngle.asRadians());
 	this->bulletMove.y = BULLET_SPEED * sin(initialAngle.asRadians());
 
 	this->activate();
+
+	if (this->isBlast)
+		this->blastSound->play();
+	else
+		this->bulletSound->play();
 }
 
 void Bullet::deactivate()
 {
 	GameObject::deactivate();
 
-	if (isBlast)
+	if (this->isBlast)
 		this->addToBlastStack();
 	else
 		this->addToBulletStack();

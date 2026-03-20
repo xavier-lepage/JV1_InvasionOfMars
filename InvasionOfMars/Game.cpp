@@ -31,7 +31,10 @@ int Game::run()
 bool Game::init()
 {
 	if (!ContentPipeline::getInstance().loadContent()) return false;
-	if (!music.openFromFile(std::filesystem::path("Ressources\\Sounds\\Music\\Carpenter_brut_remorse.ogg"))) return false;
+	if (!loadMusic()) return false;
+
+	boostTriggerSound = new Sound(ContentPipeline::getInstance().getTokenSoundBuffer());
+	nukeTriggerSound = new Sound(ContentPipeline::getInstance().getExplosionSoundBuffer());
 
 	field = new Sprite(ContentPipeline::getInstance().getBackgroundTexture());
 	field->setPosition({ 0.0f, 0.0f });
@@ -366,12 +369,16 @@ void Game::handlePlayerCollisions()
 
 void Game::onCollectBoost(Boost& boost)
 {
+	boostTriggerSound->play();
+
 	boost.despawn();
 	player.boost();
 }
 
 void Game::onCollectNuke(Nuke& nuke)
 {
+	nukeTriggerSound->play();
+
 	nuke.despawn();
 	for (int i = 0; i < ALIEN_COUNT; i++)
 	{
@@ -413,6 +420,8 @@ void Game::drawBullets()
 bool Game::unload()
 {
 	if (field != nullptr) delete field;
+	if (boostTriggerSound != nullptr) delete boostTriggerSound;
+	if (nukeTriggerSound != nullptr) delete nukeTriggerSound;
 
 	return true;
 }
@@ -487,4 +496,24 @@ void Game::manageGameOver()
 		isGameOver = true;
 		music.stop();
 	}
+}
+
+bool Game::loadMusic()
+{
+	int musicID = floor(Math::generateRandomFloat(0, MUSIC_COUNT - 1));
+
+	if (musicID == 0)
+	{
+		if (!music.openFromFile(std::filesystem::path("Ressources\\Sounds\\Music\\Carpenter_brut_remorse.ogg"))) return false;
+	}
+	else if (musicID == 1)
+	{
+		if (!music.openFromFile(std::filesystem::path("Ressources\\Sounds\\Music\\Deadmau5_welk_then.ogg"))) return false;
+	}
+	else
+	{
+		if (!music.openFromFile(std::filesystem::path("Ressources\\Sounds\\Music\\Mega_drive_narc.ogg"))) return false;
+	}
+
+	return true;
 }

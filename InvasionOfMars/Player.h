@@ -5,6 +5,7 @@ class Player : public GameObject
 {
 public:
 	Player();
+	~Player();
 	void init();
 	void update(const Vector2f& move, const float deltaTime);
 
@@ -30,4 +31,7 @@ private:
 	float bottomBound;
 	float rightBound;
 	float leftBound;
+
+	Sound* hordeSound = nullptr;
+	Sound* playerDeathSound = nullptr;
 };
