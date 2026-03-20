@@ -4,6 +4,7 @@
 const GameObject* Alien::player = nullptr;
 
 std::stack<Alien*> Alien::alienStack;
+float Alien::alienSpawnTimer = 0.0f;
 
 Alien::Alien()
 	: alienDeathSound(new Sound(ContentPipeline::getInstance().getAlienDeathBuffer()))
@@ -39,9 +40,19 @@ void Alien::update(float deltaTime)
 			else
 				angle = atan2f(getPosition().y - player->getPosition().y, getPosition().x - player->getPosition().x);
 
-			this->setRotation(radians(angle));
+			if (this->isSpawning())
+			{
+				spawnAnimationTimer -= deltaTime;
+				this->setRotation(radians(angle + FULL_TURN * spawnAnimationTimer));
 
-			this->move(cos(angle) * ALIEN_SPEED * deltaTime, sin(angle) * ALIEN_SPEED * deltaTime);
+				float scale = min(ALIEN_SPAWN_ANIMATION_DURATION - spawnAnimationTimer, NORMAL_SCALE);
+				this->setScale({ scale, scale });
+			}
+			else
+			{
+				this->setRotation(radians(angle));
+				this->move(cos(angle) * ALIEN_SPEED * deltaTime, sin(angle) * ALIEN_SPEED * deltaTime);
+			}
 		}
 	}
 }
@@ -74,11 +85,28 @@ Vector2f Alien::findSpawnPosition() const
 	return position;
 }
 
-void Alien::spawn()
-{	
-	this->setPosition(this->findSpawnPosition());
+void Alien::spawnAliens(const float deltaTime)
+{
+	if (alienSpawnTimer > 0.0f)
+	{
+		alienSpawnTimer -= deltaTime;
+		return;
+	}
 
-	this->activate();
+	Alien* alien = Alien::getAvailableAlien();
+
+	if (alien == nullptr) return;
+
+	alienSpawnTimer = ALIEN_SPAWN_COOLDOWN;
+
+	alien->setPosition(alien->findSpawnPosition());
+	alien->spawnAnimationTimer = ALIEN_SPAWN_ANIMATION_DURATION;
+	alien->activate();
+}
+
+bool Alien::isSpawning()
+{
+	return this->spawnAnimationTimer > 0.0f;
 }
 
 void Alien::deactivate()

@@ -52,7 +52,6 @@ private:
 	void drawBullets();
 
 	void initAliens();
-	void spawnAliens();
 	void updateAliens();
 	void drawAliens();
 	void onAlienDeath(Alien& alien);
@@ -89,7 +88,6 @@ private:
     Clock clock;
 	float deltaTime;
 	float recoilTimer;
-	float alienSpawnTimer;
 
 	float comboTimer;
 	unsigned int currentCombo = 0;

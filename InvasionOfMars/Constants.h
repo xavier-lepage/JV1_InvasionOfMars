@@ -1,11 +1,15 @@
 #pragma once
+
 static const unsigned int SCREEN_WIDTH = 1280;
 static const unsigned int SCREEN_HEIGHT = 720;
 
 static const unsigned int WORLD_WIDTH = 3840;
 static const unsigned int WORLD_HEIGHT = 2160;
 
+const float PI = 3.14159265358979323846f;
+const float FULL_TURN = 2.0f * PI;
 const float DIAGONAL_RATIO = 0.70710678f;
+const float NORMAL_SCALE = 1.0f;
 
 const float PLAYER_RADIUS = 32.0f;
 const float PLAYER_SPEED = 300.0f;
@@ -20,6 +24,7 @@ const float PLAYER_BOOST_SPEED = 400.0f;
 
 static const unsigned int ALIEN_COUNT = 60;
 const float ALIEN_SPAWN_COOLDOWN = 0.33f;
+const float ALIEN_SPAWN_ANIMATION_DURATION = 1.0f;
 const float MIN_ALIEN_DISTANCE = 200.0f;
 const float ALIEN_SPEED = 200.0f;
 
