@@ -151,14 +151,13 @@ void Game::update()
 
 	if (isPaused || isGameOver) return;
 
+	mainView.setCenter(player.getPosition());
+	ajustCrossingWorldLimits();
 	currentViewRectangle = FloatRect(
 		mainView.getCenter() - mainView.getSize() / 2.0f,
 		mainView.getSize()
 	);
 
-	//On peut déplacer la vue, mais on peut aussi lui la centrer sur une position précise, 
-	//comme celle du joueur (avec la méthode setCenter).  Quand votre joueur va se déplacer 
-	//vous devrez centrer la vue sur lui.
 	if (inputs.rotated) player.setRotation(inputs.aimAngle);
 	player.update(inputs.move, deltaTime);
 
@@ -166,13 +165,10 @@ void Game::update()
 	if (inputs.fire) fire();
 	updateBullets();
 
-	mainView.setCenter(player.getPosition());
-	ajustCrossingWorldLimits();
-
-	if (alienSpawnTimer > 0.0f) alienSpawnTimer -= deltaTime;
 	updateScoreTags();
-	spawnAliens();
+	Alien::spawnAliens(deltaTime);
 	updateAliens();
+
 	comboTimer -= deltaTime;
 
 	updatePowerUps();
@@ -244,7 +240,7 @@ void Game::handleProjectileCollisions()
 {
 	for (int i = 0; i < ALIEN_COUNT; i++)
 	{
-		if (aliens[i].isActive())
+		if (aliens[i].isActive() && !aliens[i].isSpawning())
 		{
 			for (int j = 0; j < BULLET_COUNT; j++)
 			{
@@ -360,7 +356,7 @@ void Game::handlePlayerCollisions()
 
 	for (int i = 0; i < ALIEN_COUNT; i++)
 	{
-		if (aliens[i].isActive())
+		if (aliens[i].isActive() && !aliens[i].isSpawning())
 		{
 			if (player.isCircleColliding(aliens[i]))
 			{
@@ -460,19 +456,6 @@ void Game::initAliens()
 		aliens[i].init(rand() % ContentPipeline::ALIEN_TEXTURE_NUMBER);
 }
 
-void Game::spawnAliens()
-{
-	if (alienSpawnTimer > 0) return;
-
-	Alien* alien = Alien::getAvailableAlien();
-	if (alien != nullptr)
-	{
-		alienSpawnTimer = ALIEN_SPAWN_COOLDOWN;
-
-		alien->spawn();
-	}
-}
-
 void Game::updateAliens()
 {
 	for (int i = 0; i < ALIEN_COUNT; i++)
@@ -520,7 +503,7 @@ void Game::manageGameOver()
 
 bool Game::loadMusic()
 {
-	int musicID = floor(Math::generateRandomFloat(0, MUSIC_COUNT - 1));
+	unsigned int musicID = (int)floor(Math::generateRandomFloat(0, MUSIC_COUNT - 1));
 
 	if (musicID == 0)
 	{
