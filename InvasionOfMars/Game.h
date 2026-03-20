@@ -11,6 +11,7 @@
 #include "Bullet.h"
 #include "Boost.h"
 #include "Nuke.h"
+#include "ScoreTag.h"
 
 using namespace sf;
 using std::optional;
@@ -36,6 +37,7 @@ private:
 
 	bool init();
 	void initRenderWindow();
+
 	void getInputs();
 	void update();
 	void draw();
@@ -55,12 +57,16 @@ private:
 	void drawAliens();
 	void onAlienDeath(Alien& alien);
 
+	void updateScoreTags();
+	void drawScoreTags();
+
 	void rollPowerUp(const Alien& alien);
 	void initPowerUps();
 	void updatePowerUps();
 	void drawPowerUps();
 
 	void increaseScore();
+	unsigned int computeScoreIncrement();
 
 	void fire();
 	void handleProjectileCollisions();
@@ -107,6 +113,7 @@ private:
 	Bullet blasts[BLAST_COUNT];
 
 	Alien aliens[ALIEN_COUNT];
+	ScoreTag scoreTags[SCORE_TAG_COUNT];
 
 	Boost boosts[BOOST_COUNT];
 	Nuke nukes[NUKE_COUNT];

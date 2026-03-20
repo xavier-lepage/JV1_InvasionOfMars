@@ -170,6 +170,7 @@ void Game::update()
 	ajustCrossingWorldLimits();
 
 	if (alienSpawnTimer > 0.0f) alienSpawnTimer -= deltaTime;
+	updateScoreTags();
 	spawnAliens();
 	updateAliens();
 	comboTimer -= deltaTime;
@@ -186,6 +187,7 @@ void Game::draw()
 	renderWindow.setView(mainView);
 	renderWindow.draw(*field);
 
+	drawScoreTags();
 	drawPowerUps();
 	drawBullets();
 	drawAliens();
@@ -315,8 +317,9 @@ void Game::onAlienDeath(Alien& alien)
 {
 	alien.deactivate();
 
-	rollPowerUp(alien);
+	ScoreTag::spawn(alien.getPosition(), computeScoreIncrement());
 
+	rollPowerUp(alien);
 	increaseScore();
 }
 
@@ -328,10 +331,15 @@ void Game::increaseScore()
 	if (comboTimer < 0.0f) currentCombo = 0;
 	comboTimer = COMBO_DURATION;
 
-	score += min(SCORE_INCREMENT + (currentCombo * COMBO_INCREMENT), MAX_SCORE_INCREMENT);
+	score += computeScoreIncrement();
 
 	if (lastScore / LIFE_GAIN_SCORE_TRESHOLD < score / LIFE_GAIN_SCORE_TRESHOLD) 
 		remainingLives++;
+}
+
+unsigned int Game::computeScoreIncrement()
+{
+	return min(SCORE_INCREMENT + (currentCombo * COMBO_INCREMENT), MAX_SCORE_INCREMENT);
 }
 
 void Game::handlePlayerCollisions()
@@ -475,6 +483,18 @@ void Game::drawAliens()
 {
 	for (int i = 0; i < ALIEN_COUNT; i++)
 		aliens[i].draw(renderWindow);
+}
+
+void Game::updateScoreTags()
+{
+	for (int i = 0; i < SCORE_TAG_COUNT; i++)
+		scoreTags[i].update(deltaTime);
+}
+
+void Game::drawScoreTags()
+{
+	for (int i = 0; i < SCORE_TAG_COUNT; i++)
+		scoreTags[i].draw(renderWindow);
 }
 
 void Game::managePause()
