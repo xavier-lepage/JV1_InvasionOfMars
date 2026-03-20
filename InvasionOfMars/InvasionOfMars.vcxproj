@@ -181,6 +181,7 @@
     <ClCompile Include="Nuke.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PowerUp.cpp" />
+    <ClCompile Include="ScoreTag.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Alien.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PowerUp.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ScoreTag.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Ressources\Fonts\segoepr.ttf" />

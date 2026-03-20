@@ -23,6 +23,9 @@ const float ALIEN_SPAWN_COOLDOWN = 0.33f;
 const float MIN_ALIEN_DISTANCE = 200.0f;
 const float ALIEN_SPEED = 200.0f;
 
+static const unsigned int SCORE_TAG_COUNT = 60;
+const float SCORE_TAG_DURATION = 1.0f;
+
 static const unsigned int SCORE_INCREMENT = 100;
 static const unsigned int MAX_SCORE_INCREMENT = 500;
 static const unsigned int COMBO_INCREMENT = 10;
