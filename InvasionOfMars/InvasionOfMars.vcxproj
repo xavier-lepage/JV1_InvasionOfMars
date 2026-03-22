@@ -169,16 +169,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Alien.cpp" />
+    <ClCompile Include="Boost.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="CollisionCircle.cpp" />
     <ClCompile Include="ContentPipeline.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Hud.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Nuke.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
+    <ClCompile Include="ScoreTag.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Alien.h" />
+    <ClInclude Include="Boost.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionCircle.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="ContentPipeline.h" />
@@ -186,7 +194,12 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Hud.h" />
     <ClInclude Include="Inputs.h" />
+    <ClInclude Include="Math.h" />
+    <ClInclude Include="Nuke.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PowerUp.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ScoreTag.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Ressources\Fonts\segoepr.ttf" />
@@ -204,6 +217,7 @@
     <None Include="Ressources\Sounds\SpaceShots\ToggleSound.ogg" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Ressources\icon.ico" />
     <Image Include="Ressources\Sprites\Backgrounds\MoonReflectiveBackground.png" />
     <Image Include="Ressources\Sprites\Logos\BoostLogo.png" />
     <Image Include="Ressources\Sprites\Logos\NukeLogo.png" />
@@ -213,6 +227,9 @@
     <Image Include="Ressources\Sprites\SpacemanAndAliens\Alien2.png" />
     <Image Include="Ressources\Sprites\SpacemanAndAliens\Alien3.png" />
     <Image Include="Ressources\Sprites\SpacemanAndAliens\Spaceman.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="InvasionOfMars.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

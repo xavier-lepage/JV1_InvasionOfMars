@@ -14,6 +14,8 @@ public:
 	const Texture& getProjectileTexture(const int projectileNumber) const;
 	const Texture& getAlienTexture(const int alienTextureNumber) const;
 
+	const Image& getGameIcon() const;
+
 	const SoundBuffer& ContentPipeline::getHordeBuffer() const;
 	const SoundBuffer& ContentPipeline::getAlienDeathBuffer() const;
 	const SoundBuffer& ContentPipeline::getPlayerDeathBuffer() const;
@@ -41,6 +43,8 @@ private:
 	Texture alienTexture[ALIEN_TEXTURE_NUMBER];
 	Texture projectileTexture[PROJECTILE_TEXTURE_NUMBER];
 	Texture logoTexture[LOGO_TEXTURE_NUMBER];
+
+	Image gameIcon;
 
 	SoundBuffer hordeBuffer;
 	SoundBuffer alienDeathBuffer;

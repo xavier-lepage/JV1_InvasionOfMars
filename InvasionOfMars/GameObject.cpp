@@ -102,3 +102,14 @@ void GameObject::draw(RenderWindow& renderWindow) const
 {
 	if (active) renderWindow.draw(*this);
 }
+
+Vector2f GameObject::getRandomPosition() const
+{
+	int collisionCircleRadius = (int)this->getCollisionCircleRadius();
+
+	return
+	{
+		Math::generateRandomFloat(collisionCircleRadius, WORLD_WIDTH),
+		Math::generateRandomFloat(collisionCircleRadius, WORLD_HEIGHT)
+	};
+}

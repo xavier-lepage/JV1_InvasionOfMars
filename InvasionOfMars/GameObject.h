@@ -1,6 +1,10 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "CollisionCircle.h"
+#include "Constants.h"
+#include "Math.h"
+#include <stack>
 
 using namespace sf;
 
@@ -12,7 +16,7 @@ public:
 	void setTexture(const Texture& texture);
 
 	void activate();
-	void deactivate();
+	virtual void deactivate();
 	bool isActive() const;
 
 	void setPosition(const float x, const float y);
@@ -24,12 +28,13 @@ public:
 	void useHorizontalAxisForCircleCollision();
 	void useVerticalAxisForCircleCollision();
 	bool isCircleColliding(const GameObject& other) const;
-	
 
 
 	void move(const float offsetX, const float offsetY);
 	void move(const Vector2f& offset);
 	void moveBack();
+
+	Vector2f getRandomPosition() const;
 
 	virtual void draw(RenderWindow& renderWindow) const;
 

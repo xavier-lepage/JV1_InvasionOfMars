@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
+using std::to_string;
 
 class Hud
 {
@@ -9,9 +10,12 @@ public:
 	Hud();
 	~Hud();
 	void hudInit();
+	void update(const unsigned int lives, const unsigned int score, const bool isPaused, const bool isGameOver);
 	void draw(RenderWindow& renderWindow);
 
 private:
-	Text* bidon = nullptr;
+	Text* lives = nullptr;
+	Text* score = nullptr;
+	Text* pause = nullptr;
+	Text* gameOver = nullptr;
 };
-
