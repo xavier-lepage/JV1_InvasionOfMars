@@ -4,7 +4,13 @@
 std::stack<Nuke*> Nuke::nukeStack;
 
 Nuke::Nuke()
+	: nukeTriggerSound(new Sound(ContentPipeline::getInstance().getExplosionSoundBuffer()))
 {
+}
+
+Nuke::~Nuke()
+{
+	if (this->nukeTriggerSound != nullptr) delete this->nukeTriggerSound;
 }
 
 void Nuke::init()
@@ -26,3 +32,8 @@ Nuke* Nuke::getAvailableNuke()
 	return nuke;
 }
 
+void Nuke::collect()
+{
+	this->despawn();
+	this->nukeTriggerSound->play();
+}

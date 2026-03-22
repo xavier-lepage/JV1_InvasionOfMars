@@ -28,7 +28,6 @@ public:
 	void useHorizontalAxisForCircleCollision();
 	void useVerticalAxisForCircleCollision();
 	bool isCircleColliding(const GameObject& other) const;
-	
 
 
 	void move(const float offsetX, const float offsetY);

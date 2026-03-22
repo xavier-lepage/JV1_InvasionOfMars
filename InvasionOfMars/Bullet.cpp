@@ -3,6 +3,7 @@
 
 std::stack<Bullet*> Bullet::bulletStack;
 std::stack<Bullet*> Bullet::blastStack;
+float Bullet::recoil = 0.0f;
 
 Bullet::Bullet():
 	bulletMove(Vector2f(0.0f, 0.0f)), 
@@ -28,19 +29,37 @@ void Bullet::update(const float deltaTime, const FloatRect& currentViewRectangle
 	}
 }
 
-void Bullet::shoot(const Vector2f& initialPosition, const Angle& initialAngle)
+void Bullet::updateRecoil(const float deltaTime)
 {
-	this->setPosition(initialPosition);
+	if (recoil > 0.0f) recoil -= deltaTime;
+}
 
-	this->bulletMove.x = BULLET_SPEED * cos(initialAngle.asRadians());
-	this->bulletMove.y = BULLET_SPEED * sin(initialAngle.asRadians());
+void Bullet::shoot(const Vector2f& initialPosition, const Angle& initialAngle, const bool isBlast)
+{
+	if (recoil > 0.0f) return;
 
-	this->activate();
+	Bullet* projectile;
+	if (isBlast) projectile = Bullet::getAvailableBlast();
+	else projectile = Bullet::getAvailableBullet();
 
-	if (this->isBlast)
-		this->blastSound->play();
+	if (projectile == nullptr) return;
+
+	projectile->setPosition(initialPosition);
+	projectile->bulletMove.x = projectile->speed * cos(initialAngle.asRadians());
+	projectile->bulletMove.y = projectile->speed * sin(initialAngle.asRadians());
+
+	projectile->activate();
+
+	if (projectile->isBlast)
+	{
+		projectile->blastSound->play();
+		recoil = BLAST_RECOIL;
+	}
 	else
-		this->bulletSound->play();
+	{
+		projectile->bulletSound->play();
+		recoil = BULLET_RECOIL;
+	}
 }
 
 void Bullet::deactivate()

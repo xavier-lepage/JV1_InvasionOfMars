@@ -2,8 +2,6 @@
 #include "ContentPipeline.h"
 
 Player::Player():
-	respawnTimer(0.0f), 
-	invincibilityTimer(0.0f), 
 	hordeSound(new Sound(ContentPipeline::getInstance().getHordeBuffer())),
 	playerDeathSound(new Sound(ContentPipeline::getInstance().getPlayerDeathBuffer()))
 {
