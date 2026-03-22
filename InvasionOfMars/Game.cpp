@@ -8,12 +8,12 @@ Game::Game()
 
 	hudView = View(FloatRect({ 0.0f, 0.0f }, { SCREEN_WIDTH, SCREEN_HEIGHT }));
 
-	srand((int)time(0));  //Pour générer le seed random
+	srand((int)time(0));  // Pour générer le seed random
 }
 
 int Game::run()
 {
-	if (!init())return EXIT_FAILURE;
+	if (!init()) return EXIT_FAILURE;
 
 	while (renderWindow.isOpen())
 	{
@@ -23,7 +23,7 @@ int Game::run()
 		draw();
 	}
 
-	if (!unload())return EXIT_FAILURE;
+	if (!unload()) return EXIT_FAILURE;
 
 	return EXIT_SUCCESS;
 }
@@ -33,12 +33,9 @@ bool Game::init()
 	if (!ContentPipeline::getInstance().loadContent()) return false;
 	if (!loadMusic()) return false;
 
-	boostTriggerSound = new Sound(ContentPipeline::getInstance().getTokenSoundBuffer());
-	nukeTriggerSound = new Sound(ContentPipeline::getInstance().getExplosionSoundBuffer());
-
 	field = new Sprite(ContentPipeline::getInstance().getBackgroundTexture());
 	field->setPosition({ 0.0f, 0.0f });
-	field->setColor(Color(193, 68, 14, 255)); //Couleur "Rouge sol de Mars"
+	field->setColor(Color(193, 68, 14, 255)); // Couleur "Rouge sol de Mars"
 
 	player.init();
 	player.setPosition((float)WORLD_CENTER_X, (float)WORLD_CENTER_Y);
@@ -54,6 +51,7 @@ bool Game::init()
 	music.play();
 
 	initRenderWindow();
+
 	return true;
 }
 
@@ -81,10 +79,8 @@ void Game::getInputs()
 {
 	inputs.reset();
 
-	//On passe l'événement en référence et celui-ci est chargé du dernier événement reçu!
 	while (const optional event = renderWindow.pollEvent())
 	{
-		//x sur la fenêtre
 		if (event->is<Event::Closed>())	renderWindow.close();
 
 		if (const Event::JoystickButtonPressed* joystickButtonPressed = event->getIf<Event::JoystickButtonPressed>())
@@ -137,33 +133,22 @@ void Game::getInputs()
 	}
 }
 
-//Vous devrez centrer la vue sur le player: https://www.sfml-dev.org/tutorials/2.6/graphics-view-fr.php
 void Game::update()
 {
-	managePause();
-	hud.update(remainingLives, score, isPaused, isGameOver);
-
 	if (inputs.toggleFullscreen)
 	{
 		isFullscreen = !isFullscreen;
 		initRenderWindow();
 	}
 
-	if (isPaused || isGameOver) return;
+	hud.update(remainingLives, score, isPaused, isGameOver);
+	if (isGameOver) return;
+	managePause();
+	if (isPaused) return;
 
-	mainView.setCenter(player.getPosition());
-	ajustCrossingWorldLimits();
-	currentViewRectangle = FloatRect(
-		mainView.getCenter() - mainView.getSize() / 2.0f,
-		mainView.getSize()
-	);
-
-	if (inputs.rotated) player.setRotation(inputs.aimAngle);
-	player.update(inputs.move, deltaTime);
-
-	if (recoilTimer > 0.0f) recoilTimer -= deltaTime;
-	if (inputs.fire) fire();
-	updateBullets();
+	manageViewUpdates();
+	managePlayerUpdates();
+	manageBulletUpdates();
 
 	updateScoreTags();
 	Alien::spawnAliens(deltaTime);
@@ -173,7 +158,7 @@ void Game::update()
 
 	updatePowerUps();
 
-	handleProjectileCollisions();
+	handleAlienCollisions();
 	handlePlayerCollisions();
 }
 
@@ -197,36 +182,38 @@ void Game::draw()
 	renderWindow.display();
 }
 
+void Game::manageViewUpdates()
+{
+	mainView.setCenter(player.getPosition());
+	ajustCrossingWorldLimits();
+	currentViewRectangle = FloatRect(
+		mainView.getCenter() - mainView.getSize() / 2.0f,
+		mainView.getSize()
+	);
+}
+
+void Game::managePlayerUpdates()
+{
+	if (inputs.rotated) player.setRotation(inputs.aimAngle);
+	player.update(inputs.move, deltaTime);
+}
+
+void Game::manageBulletUpdates()
+{
+	Bullet::updateRecoil(deltaTime);
+	if (inputs.fire) fire();
+	updateBullets();
+}
+
 void Game::fire()
 {
-	if (recoilTimer > 0 || !player.isActive()) return;
+	if (!player.isActive()) return;
 
-	if (player.isBoosted())
-	{
-		Bullet* blast = Bullet::getAvailableBlast();
-		if (blast != nullptr)
-		{
-			recoilTimer = BLAST_RECOIL;
-
-			blast->shoot(
-				player.getPosition(),
-				player.getRotation()
-			);
-		}
-	}
-	else
-	{
-		Bullet* bullet = Bullet::getAvailableBullet();
-		if (bullet != nullptr)
-		{
-			recoilTimer = BULLET_RECOIL;
-
-			bullet->shoot(
-				player.getPosition(),
-				player.getRotation()
-			);
-		}
-	}
+	Bullet::shoot(
+		player.getPosition(),
+		player.getRotation(),
+		player.isBoosted()
+	);
 }
 
 void Game::onPlayerDeath()
@@ -236,7 +223,17 @@ void Game::onPlayerDeath()
 	player.kill();
 }
 
-void Game::handleProjectileCollisions()
+void Game::onAlienDeath(Alien& alien)
+{
+	alien.deactivate();
+
+	rollPowerUp(alien);
+
+	increaseScore();
+	ScoreTag::spawn(alien.getPosition(), computeScoreIncrement());
+}
+
+void Game::handleAlienCollisions()
 {
 	for (int i = 0; i < ALIEN_COUNT; i++)
 	{
@@ -262,80 +259,46 @@ void Game::handleProjectileCollisions()
 						onAlienDeath(aliens[i]);
 				}
 			}
+
+			//	On ignore l'alien actuel de la boucle extérieure et on prend le prochain
+			for (int j = i + 1; j < ALIEN_COUNT; j++)
+			{
+				if (aliens[j].isActive() && !aliens[j].isSpawning())
+				{
+					if (aliens[i].isCircleColliding(aliens[j]))
+					{
+						const Vector2f firstAlienPosition = aliens[i].getPosition();
+						const Vector2f secondAlienPosition = aliens[j].getPosition();
+
+						const float distance = Math::computeDistance(firstAlienPosition, secondAlienPosition);
+
+						/*	Si les cercles sont en intersection, la distance entre les deux 
+							est nécessairement plus petite que la somme de leur rayons.
+							Ça veut dire que si on soustrait la distance à la somme des rayons,
+							on aura la longueur de l'intersection entre les deux. */
+						float overlapDistance = (aliens[i].getCollisionCircleRadius() + aliens[j].getCollisionCircleRadius()) - distance;
+
+						if (overlapDistance > 0.0f)
+						{
+							/*	On veut mettre la correction dans la bonne direction,
+								alors on trouve la position relative des deux aliens et
+								on divise par la distance pour avoir un vecteur unitaire
+								qui représente seulement la direction d'un envers l'autre. */
+							Vector2f direction = (firstAlienPosition - secondAlienPosition) / distance;
+
+							/*	On fait la répartition de la correction sur les deux aliens impliqués,
+								donc on utilise la moitié de la distance d'intersection */
+							Vector2f correction = direction * (overlapDistance * 0.5f);
+
+							//	On applique la correction dans les sens opposés pour les deux aliens.
+							aliens[i].move(correction);
+							aliens[j].move(-correction);
+						}
+					}
+				}
+			}
 		}
 	}
-}
-
-void Game::initPowerUps()
-{
-	for (int i = 0; i < BOOST_COUNT; i++)
-		boosts[i].init();
-
-	for (int i = 0; i < NUKE_COUNT; i++)
-		nukes[i].init();
-}
-
-void Game::updatePowerUps()
-{
-	for (int i = 0; i < BOOST_COUNT; i++)
-		boosts[i].update(deltaTime);
-
-	for (int i = 0; i < NUKE_COUNT; i++)
-		nukes[i].update(deltaTime);
-}
-
-void Game::drawPowerUps()
-{
-	for (int i = 0; i < BOOST_COUNT; i++)
-		boosts[i].draw(renderWindow);
-
-	for (int i = 0; i < NUKE_COUNT; i++)
-		nukes[i].draw(renderWindow);
-}
-
-void Game::rollPowerUp(const Alien& alien)
-{
-	float roll = Math::generateRandomFloat(0, 100) / 100.0f;
-	if (roll < POWERUP_CHANCE)
-	{
-		PowerUp* powerUp = nullptr;
-
-		if (Math::generateRandomBool())
-			powerUp = Nuke::getAvailableNuke();
-		else
-			powerUp = Boost::getAvailableBoost();
-
-		if (powerUp != nullptr) powerUp->spawn(alien.getPosition());
-	}
-}
-
-void Game::onAlienDeath(Alien& alien)
-{
-	alien.deactivate();
-
-	ScoreTag::spawn(alien.getPosition(), computeScoreIncrement());
-
-	rollPowerUp(alien);
-	increaseScore();
-}
-
-void Game::increaseScore()
-{
-	int lastScore = score;
-
-	currentCombo++;
-	if (comboTimer < 0.0f) currentCombo = 0;
-	comboTimer = COMBO_DURATION;
-
-	score += computeScoreIncrement();
-
-	if (lastScore / LIFE_GAIN_SCORE_TRESHOLD < score / LIFE_GAIN_SCORE_TRESHOLD) 
-		remainingLives++;
-}
-
-unsigned int Game::computeScoreIncrement()
-{
-	return min(SCORE_INCREMENT + (currentCombo * COMBO_INCREMENT), MAX_SCORE_INCREMENT);
 }
 
 void Game::handlePlayerCollisions()
@@ -371,19 +334,78 @@ void Game::handlePlayerCollisions()
 	}
 }
 
+void Game::increaseScore()
+{
+	const int lastScore = score;
+
+	currentCombo++;
+	if (comboTimer < 0.0f) currentCombo = 0;
+	comboTimer = COMBO_DURATION;
+
+	score += computeScoreIncrement();
+
+	if (lastScore / LIFE_GAIN_SCORE_TRESHOLD < score / LIFE_GAIN_SCORE_TRESHOLD)
+		remainingLives++;
+}
+
+unsigned int Game::computeScoreIncrement()
+{
+	return min(SCORE_INCREMENT + (currentCombo * COMBO_INCREMENT), MAX_SCORE_INCREMENT);
+}
+
+void Game::initPowerUps()
+{
+	for (int i = 0; i < BOOST_COUNT; i++)
+		boosts[i].init();
+
+	for (int i = 0; i < NUKE_COUNT; i++)
+		nukes[i].init();
+}
+
+void Game::updatePowerUps()
+{
+	for (int i = 0; i < BOOST_COUNT; i++)
+		boosts[i].update(deltaTime);
+
+	for (int i = 0; i < NUKE_COUNT; i++)
+		nukes[i].update(deltaTime);
+}
+
+void Game::drawPowerUps()
+{
+	for (int i = 0; i < BOOST_COUNT; i++)
+		boosts[i].draw(renderWindow);
+
+	for (int i = 0; i < NUKE_COUNT; i++)
+		nukes[i].draw(renderWindow);
+}
+
+void Game::rollPowerUp(const Alien& alien)
+{
+	const float roll = Math::generateRandomFloat(0, 100) / 100.0f;
+	if (roll < POWERUP_CHANCE)
+	{
+		PowerUp* powerUp = nullptr;
+
+		if (Math::generateRandomBool())
+			powerUp = Nuke::getAvailableNuke();
+		else
+			powerUp = Boost::getAvailableBoost();
+
+		if (powerUp != nullptr) powerUp->spawn(alien.getPosition());
+	}
+}
+
 void Game::onCollectBoost(Boost& boost)
 {
-	boostTriggerSound->play();
-
-	boost.despawn();
+	boost.collect();
 	player.boost();
 }
 
 void Game::onCollectNuke(Nuke& nuke)
 {
-	nukeTriggerSound->play();
+	nuke.collect();
 
-	nuke.despawn();
 	for (int i = 0; i < ALIEN_COUNT; i++)
 	{
 		if (aliens[i].isActive())
@@ -419,33 +441,6 @@ void Game::drawBullets()
 
 	for (int i = 0; i < BLAST_COUNT; i++)
 		blasts[i].draw(renderWindow);
-}
-
-bool Game::unload()
-{
-	if (field != nullptr) delete field;
-	if (boostTriggerSound != nullptr) delete boostTriggerSound;
-	if (nukeTriggerSound != nullptr) delete nukeTriggerSound;
-
-	return true;
-}
-
-void Game::computeDeltaTime()
-{
-	deltaTime = clock.restart().asSeconds();
-}
-
-void Game::ajustCrossingWorldLimits()
-{
-	if (mainView.getCenter().x < WORLD_LIMIT_MIN_X)
-		mainView.setCenter({ WORLD_LIMIT_MIN_X, mainView.getCenter().y });
-	else if (mainView.getCenter().x > WORLD_LIMIT_MAX_X)
-		mainView.setCenter({ WORLD_LIMIT_MAX_X, mainView.getCenter().y });
-
-	if (mainView.getCenter().y < WORLD_LIMIT_MIN_Y)
-		mainView.setCenter({ mainView.getCenter().x, WORLD_LIMIT_MIN_Y });
-	else if (mainView.getCenter().y > WORLD_LIMIT_MAX_Y)
-		mainView.setCenter({ mainView.getCenter().x, WORLD_LIMIT_MAX_Y });
 }
 
 void Game::initAliens()
@@ -486,10 +481,8 @@ void Game::managePause()
 	{
 		isPaused = !isPaused;
 
-		if (isPaused) 
-			music.pause();
-		else
-			music.play();
+		if (isPaused) music.pause();
+		else music.play();
 	}
 }
 
@@ -503,20 +496,38 @@ void Game::manageGameOver()
 
 bool Game::loadMusic()
 {
-	unsigned int musicID = (int)floor(Math::generateRandomFloat(0, MUSIC_COUNT - 1));
+	const unsigned int musicID = (int)floor(Math::generateRandomFloat(0, MUSIC_COUNT - 1));
+	string musicPath;
 
-	if (musicID == 0)
-	{
-		if (!music.openFromFile(std::filesystem::path("Ressources\\Sounds\\Music\\Carpenter_brut_remorse.ogg"))) return false;
-	}
-	else if (musicID == 1)
-	{
-		if (!music.openFromFile(std::filesystem::path("Ressources\\Sounds\\Music\\Deadmau5_welk_then.ogg"))) return false;
-	}
-	else
-	{
-		if (!music.openFromFile(std::filesystem::path("Ressources\\Sounds\\Music\\Mega_drive_narc.ogg"))) return false;
-	}
+	if (musicID == 0) musicPath = "Ressources\\Sounds\\Music\\Carpenter_brut_remorse.ogg";
+	else if (musicID == 1) musicPath = "Ressources\\Sounds\\Music\\Deadmau5_welk_then.ogg";
+	else musicPath = "Ressources\\Sounds\\Music\\Mega_drive_narc.ogg";
+
+	if (!music.openFromFile(std::filesystem::path(musicPath))) return false;
+	return true;
+}
+
+void Game::ajustCrossingWorldLimits()
+{
+	if (mainView.getCenter().x < WORLD_LIMIT_MIN_X)
+		mainView.setCenter({ WORLD_LIMIT_MIN_X, mainView.getCenter().y });
+	else if (mainView.getCenter().x > WORLD_LIMIT_MAX_X)
+		mainView.setCenter({ WORLD_LIMIT_MAX_X, mainView.getCenter().y });
+
+	if (mainView.getCenter().y < WORLD_LIMIT_MIN_Y)
+		mainView.setCenter({ mainView.getCenter().x, WORLD_LIMIT_MIN_Y });
+	else if (mainView.getCenter().y > WORLD_LIMIT_MAX_Y)
+		mainView.setCenter({ mainView.getCenter().x, WORLD_LIMIT_MAX_Y });
+}
+
+void Game::computeDeltaTime()
+{
+	deltaTime = clock.restart().asSeconds();
+}
+
+bool Game::unload()
+{
+	if (field != nullptr) delete field;
 
 	return true;
 }

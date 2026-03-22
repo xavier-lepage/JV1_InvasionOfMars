@@ -21,8 +21,8 @@ private:
 	void defineBounds();
 	void stayInbound();
 
-	float respawnTimer;
-	float invincibilityTimer;
+	float respawnTimer = 0.0f;
+	float invincibilityTimer = 0.0f;
 	float boostTimer = 0.0f;
 
 	float moveSpeed = PLAYER_SPEED;

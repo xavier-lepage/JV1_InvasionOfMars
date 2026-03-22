@@ -17,6 +17,7 @@ using namespace sf;
 using std::optional;
 using std::min;
 using std::floor;
+using std::string;
 
 class Game
 {
@@ -37,15 +38,18 @@ private:
 
 	bool init();
 	void initRenderWindow();
+	void computeDeltaTime();
 
 	void getInputs();
 	void update();
 	void draw();
 	bool unload();
 
-	void computeDeltaTime();
-
 	void ajustCrossingWorldLimits();
+
+	void manageViewUpdates();
+	void managePlayerUpdates();
+	void manageBulletUpdates();
 
 	void initBullets();
 	void updateBullets();
@@ -68,7 +72,7 @@ private:
 	unsigned int computeScoreIncrement();
 
 	void fire();
-	void handleProjectileCollisions();
+	void handleAlienCollisions();
 
 	void handlePlayerCollisions();
 	void onPlayerDeath();
@@ -87,7 +91,6 @@ private:
 
     Clock clock;
 	float deltaTime;
-	float recoilTimer;
 
 	float comboTimer;
 	unsigned int currentCombo = 0;
@@ -117,7 +120,4 @@ private:
 	Nuke nukes[NUKE_COUNT];
 
 	FloatRect currentViewRectangle;
-
-	Sound* boostTriggerSound = nullptr;
-	Sound* nukeTriggerSound = nullptr;
 };

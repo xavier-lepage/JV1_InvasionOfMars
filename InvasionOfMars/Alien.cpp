@@ -35,6 +35,8 @@ void Alien::update(float deltaTime)
 		{
 			float angle;
 
+			/*	On détermine l'angle selon si le joueur est en vie. Pour inverser la direction d'un alien
+				quand le joueur meurt, on peut simplement inverser le vecteur. */
 			if (player->isActive())
 				angle = atan2f(player->getPosition().y - getPosition().y, player->getPosition().x - getPosition().x);
 			else
@@ -76,6 +78,7 @@ Vector2f Alien::findSpawnPosition() const
 	Vector2f position;
 	float distance;
 
+	//	On itère jusqu'à trouver une position qui se trouve assez loin du joueur.
 	do
 	{
 		position = this->getRandomPosition();
