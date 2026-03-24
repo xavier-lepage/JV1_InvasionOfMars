@@ -9,7 +9,7 @@ void PowerUp::update(const float deltaTime)
 {
 	if (this->despawnTimer > 0.0f) 
 		this->despawnTimer -= deltaTime;
-	else 
+	else if (this->isActive())
 		this->despawn();
 }
 
