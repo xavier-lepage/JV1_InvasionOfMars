@@ -6,6 +6,7 @@ std::stack<Boost*> Boost::boostStack;
 Boost::Boost()
 	: boostTriggerSound(new Sound(ContentPipeline::getInstance().getTokenSoundBuffer()))
 {
+	this->addToStack();
 }
 
 Boost::~Boost()

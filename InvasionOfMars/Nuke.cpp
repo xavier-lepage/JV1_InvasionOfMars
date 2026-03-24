@@ -6,6 +6,7 @@ std::stack<Nuke*> Nuke::nukeStack;
 Nuke::Nuke()
 	: nukeTriggerSound(new Sound(ContentPipeline::getInstance().getExplosionSoundBuffer()))
 {
+	this->addToStack();
 }
 
 Nuke::~Nuke()
