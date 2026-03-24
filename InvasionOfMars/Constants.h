@@ -42,7 +42,7 @@ static const unsigned int BULLET_ID = 1;
 const float BULLET_SPEED = 1200.0f;
 const float BULLET_RECOIL = 1.0f / 6.0f;
 
-static const unsigned int BLAST_COUNT = 4;
+static const unsigned int BLAST_COUNT = 6;
 static const unsigned int BLAST_ID = 0;
 const float BLAST_SPEED = 800.0f;
 const float BLAST_RECOIL = 1.0f / 3.0f;

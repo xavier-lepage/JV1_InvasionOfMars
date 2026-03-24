@@ -7,6 +7,7 @@ ScoreTag::ScoreTag()
 	: scoreText(new Text(ContentPipeline::getInstance().getFont(), "", 16U))
 {
 	this->scoreText->setFillColor(Color::White);
+	this->addToScoreTagStack();
 }
 
 ScoreTag::~ScoreTag()
@@ -17,7 +18,7 @@ ScoreTag::~ScoreTag()
 void ScoreTag::update(const float deltaTime)
 {
 	if (this->despawnTimer > 0.0f) this->despawnTimer -= deltaTime;
-	else this->deactivate();
+	else if (this->isActive()) this->deactivate();
 }
 
 void ScoreTag::deactivate()
